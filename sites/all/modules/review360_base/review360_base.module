@@ -344,13 +344,20 @@ function review360_base_theme() {
             'template' => 'template/member/review360_interviewer_survey_submitted',
             'variables' => array('user_key' => NULL),
         ),
+        'review360_interviewer_school' => array(
+            'template' => 'template/member/review360_interviewer_school_view',
+//            'variables' => array('user_key' => NULL),
+        ),
         
     );
 }
 
 function rend_block_by_name($model_name, $block_name) {
     $block = block_load($model_name, $block_name);
-    return drupal_render(_block_get_renderable_array(_block_render_blocks(array($block))));
+    $block_array = array($block);
+    $render_block = _block_render_blocks($block_array);
+    $render_block_array = _block_get_renderable_array($render_block);
+    return drupal_render($render_block_array);
 }
 
 function rend_left_menu_li($get_q,$text,$path){
@@ -412,3 +419,28 @@ function get_survey_by_id($survey_id){
     $result = db_query($query)->fetchObject();
     return $result;
 }
+
+
+function array_to_object($array) {  
+    if (is_array($array)) {  
+        $obj = new StdClass();  
+   
+        foreach ($array as $key => $val){  
+            $obj->$key = $val;  
+        }  
+    }  
+    else { $obj = $array; }  
+   
+    return $obj;  
+}  
+function object_to_array($object) {  
+    if (is_object($object)) {  
+        foreach ($object as $key => $value) {  
+            $array[$key] = $value;  
+        }  
+    }  
+    else {  
+        $array = $object;  
+    }  
+    return $array;  
+}  

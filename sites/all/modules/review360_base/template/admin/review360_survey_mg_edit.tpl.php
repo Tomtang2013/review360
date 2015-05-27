@@ -72,7 +72,10 @@ $exams = get_selectable_exam();
 <div class="row" style='margin-right:15px;margin-left:15px;'>
     <label>问卷编辑:</label>
     <hr/>
-    <?php print drupal_render(drupal_get_form('review360_survey_edit_form', $survey)); ?>
+    <?php 
+        $form = drupal_get_form('review360_survey_edit_form', $survey);
+        print drupal_render($form); 
+    ?>
 </div>
 
 <!-- Modal -->

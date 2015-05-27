@@ -23,6 +23,8 @@
         </div>
     </div>
     <div class="col-md-6 col-md-offset-3" >
-        <?php print drupal_render(drupal_get_form('review_interviewer_onboard_form')) ;?> 
+        <?php 
+        $form = drupal_get_form('review_interviewer_onboard_form');
+        print drupal_render($form) ;?> 
     </div>
 </div>

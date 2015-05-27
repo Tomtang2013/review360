@@ -258,26 +258,23 @@ function review_interviewer_infor_form($form_state, $args) {
     );
 
     $form['infor_university'] = array(
-        '#type' => 'select',
+        '#type' => 'textfield',
         '#prefix' => '
             <div class="input-group col-md-6 user-infor-item">
             <span class="input-group-addon" id="sizing-addon1">高校名称</span> ',
-        '#suffix' => '</div></div>',
-        '#options' => array(
-            0=>'-- 请选择 --',
-            1=>'高中以下',
-            2=>'中专或高中',
-            3=>'大专',
-            4=>'大学本科',
-            5=>'硕士研究生',
-            6=>'博士研究生及以上',
-        ),
+        '#suffix' => ' <span class="input-group-addon"><span class="school-remove-btn btn-icon glyphicon glyphicon-remove"></span></span>
+                <span class="input-group-addon"><span class="school-list-btn btn-icon glyphicon glyphicon-th-list"></span></span>
+                </div></div>',
         '#default_value' => prepare_default_value($user->u_university),
         '#attributes' => array(
             'class' => array(
                 'form-control',
             ),
-            'placeholder'=>'您所在或毕业的高校名称',
+            'readonly' =>'',
+            'data-toggle' =>'tooltip',
+            'data-placement'=>'bottom',
+            'placeholder'=>'',
+            'title'=>'您所在或毕业的高校名称。'
         ),
     );
     
@@ -410,16 +407,7 @@ function review_interviewer_infor_form_validate($form, &$form_state) {
 }
 
 function review_interviewer_infor_form_submit($form, &$form_state) {
-    $infor = $form_state['values'];
-//    db_update('review360_survey_user')
-//      ->fields(array(
-//        'u_email' => $onboard['interview_email'],
-//        'update_date' => time(),
-//      ))
-//      ->condition('survey_user_key', $onboard['interview_key'])
-//      ->execute();
-//    Global $base_path;
-    drupal_goto('interviewer/infor/'.$form_state['values']['interview_key']);
+    drupal_goto('interviewer/survey/'.$form_state['values']['infor_key']);
 }
 
 

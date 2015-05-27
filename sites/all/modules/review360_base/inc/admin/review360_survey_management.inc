@@ -424,7 +424,7 @@ function review360_survey_edit_form_submit($form, &$form_state) {
               ))
             ->condition('survey_id', $survey['survey_id'])
             ->execute();
-        drupal_set_message(t("生成用户问卷 $counter 份。"));
+//        drupal_set_message(t("生成用户问卷 $counter 份。"));
     }
 }
 
@@ -452,27 +452,95 @@ function genrate_user_exam($s_id){
     $survey = get_survey_by_id($s_id);
     $old_node = node_load($survey->nid);
     $users = get_survey_user_exam_list($s_id);
-    $counter = 0;
-    foreach($users as $user){
-        $node = null;
-        $exam_name = $survey->survey_name.'_'.$user->su_id;
-        $node = prepare_node_main($exam_name);
-        $node->webform = array();
-        
-        $node->webform['components'] = $old_node->webform['components'];
-        
-        $node->webform['allow_draft'] = 1;
-        $node->webform['redirect_url'] = 'interviewer/survey/submitted/'.$user->survey_user_key;
+//    $counter = 0;
+//    foreach($users as $user){
+//        $node = null;
+//        $exam_name = $survey->survey_name.'_'.$user->su_id;
+//        $node = prepare_node_main($exam_name);
+//        $node->webform = array();
+//        
+//        $node->webform['components'] = $old_node->webform['components'];
+//        
+//        $node->webform['allow_draft'] = 1;
+//        $node->webform['redirect_url'] = 'interviewer/survey/submitted/'.$user->survey_user_key;
+////        $node->path = array('alias' => $user->survey_user_key);
+//        node_object_prepare($node);
+//        $node = node_submit($node);
+//        node_save($node);
+//        if($node->nid > 0){
+//            update_survey_user_nid($user->su_id,$node->nid);
+//            $counter++;
+//        }
+//    }
+    
+    $function = 'genrate_user_exam_batch';
+    $batch = $function($users,$survey,$old_node);
+//          
+    batch_set($batch);
+//    return $counter;
+}
+
+function genrate_user_exam_do_batch($user,$survey,$old_node, &$context){
+    $exam_name = $survey->survey_name . '_' . $user->su_id;
+    $node = prepare_node_main($exam_name);
+    $node->webform = array();
+
+    $node->webform['components'] = $old_node->webform['components'];
+
+    $node->webform['allow_draft'] = 1;
+    $node->webform['redirect_url'] = 'interviewer/survey/submitted/' . $user->survey_user_key;
 //        $node->path = array('alias' => $user->survey_user_key);
-        node_object_prepare($node);
-        $node = node_submit($node);
-        node_save($node);
-        if($node->nid > 0){
-            update_survey_user_nid($user->su_id,$node->nid);
-            $counter++;
-        }
+    node_object_prepare($node);
+    $node = node_submit($node);
+    node_save($node);
+    if ($node->nid > 0) {
+        update_survey_user_nid($user->su_id, $node->nid);
     }
-    return $counter;
+    $context['results'][] = $node->nid;
+}
+
+function genrate_user_exam_batch($users,$survey,$old_node){
+    
+  $operations = array();
+
+  foreach($users as $user){
+      $operations[] = array(
+        'genrate_user_exam_do_batch',
+        array(
+          $user,
+          $survey,
+          $old_node
+        ),
+      );
+  }
+    
+    $batch = array(
+        'operations' => $operations,
+        'finished' => 'genrate_user_exam_finish',
+        'title' => t('问卷生成'),
+        'init_message' => t('生成中....'),
+        'progress_message' => t('已经生成 @current 总共 @total.'),
+        'error_message' => t('生成错误请联系管理员.'),
+        'file' => drupal_get_path('module', 'review360_base') . '/inc/admin/review360_survey_management.inc',
+    );
+    return $batch;
+}
+
+function genrate_user_exam_finish($success, $results, $operations) {
+  if ($success) {
+    drupal_set_message(t('总共生成问卷 "%final" 份', array('%final' => count($results))));
+  }
+  else {
+    $error_operation = reset($operations);
+    drupal_set_message(
+      t('生成问卷出错 @operation  : @args',
+        array(
+          '@operation' => $error_operation[0],
+          '@args' => print_r($error_operation[0], TRUE),
+        )
+      )
+    );
+  }
 }
 
 function update_survey_user_nid($su_id,$nid){

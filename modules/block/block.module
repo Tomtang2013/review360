@@ -887,7 +887,9 @@ function _block_render_blocks($region_blocks) {
       $cached_blocks = cache_get_multiple($cid_values, 'cache_block');
     }
   }
-
+  
+ 
+//dd($region_blocks);
   foreach ($region_blocks as $key => $block) {
     // Render the block content if it has not been created already.
     if (!isset($block->content)) {
@@ -902,6 +904,8 @@ function _block_render_blocks($region_blocks) {
         $array = $cached_blocks[$cid]->data;
       }
       else {
+       
+        
         $array = module_invoke($block->module, 'block_view', $block->delta);
 
         // Valid PHP function names cannot contain hyphens.
