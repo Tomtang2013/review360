@@ -1,0 +1,414 @@
+<?php
+
+// $Id: review360_base.info,v 1.4 2011/07/04 13:25:57 dries Exp $
+/**
+ * Implementation of hook_init
+ */
+function review360_base_init() {
+    
+}
+
+function review360_base_js_alter(&$javascript) {
+    
+}
+
+/**
+ * Implements hook_help().
+ */
+function review360_base_help($path, $arg) {
+    switch ($path) {
+        case 'admin/help#review360_base':
+            $output = '<h3>' . t('About') . '</h3>';
+            $output .= '<p>' . t('Review 360 基础模块');
+            return $output;
+    }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function review360_base_permission() {
+    return array(
+        'review360_base' => array(
+            'title' => t('Review360 Base'),
+        ),
+
+        'review360_base_interviewer' => array(
+            'title' => t('Review360 Interviewer'),
+        ),
+        
+    );
+}
+
+function review360_base_menu() {
+    $items = array();
+    $items['dashboard'] = array(
+        'title' => t('Dashboard'),
+        'page callback'     => 'review360_base_dashboard_call_back',
+        'access arguments'  => array('review360_base'),
+        'weight'            => -47,
+    );
+    // USER ===============================
+    $items['usermanagement'] = array(
+        'title' => t('用户管理'),
+        'page callback'     => 'review360_usermanage_call_back',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_user_management.inc',
+        'weight'            => -47,
+    );
+    
+    $items['usermanagement/add'] = array(
+        'title' => t('用户管理'),
+        'page callback'     => 'save_new_user_group_ajax',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_user_management.inc',
+        'weight'            => -47,
+    );
+    
+    $items['usermanagement/grouplist'] = array(
+        'title' => t('用户管理'),
+        'page callback'     => 'get_user_group_list_ajax',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_user_management.inc',
+        'weight'            => -47,
+    );
+    
+    $items['usermanagement/group/edit/%'] = array(
+        'title' => t('用户修改'),
+        'page callback'     => 'review360_group_edit',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_user_management.inc',
+        'page arguments' => array(3),
+        'weight'            => -47,
+    );
+    
+     $items['usermanagement/group/changename'] = array(
+        'title' => t('用户修改'),
+        'page callback'     => 'review360_group_change_name_ajax',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_user_management.inc',
+        'weight'            => -47,
+    );
+    
+    $items['usermanagement/group/del'] = array(
+        'title' => t('删除用户'),
+        'page callback'     => 'review360_group_del_ajax',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_user_management.inc',
+        'weight'            => -47,
+    );
+    
+    $items['usermanagement/upload/%'] = array(
+        'title' => t('导入用户'),
+        'page callback'     => 'review360_user_upload',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_user_management.inc',
+        'page arguments' => array(2),
+        'weight'            => -47,
+    );
+     
+    $items['export_user_file/%'] = array(
+        'title' => t('导出用户'),
+        'page callback'     => 'export_user_file',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_user_management.inc',
+        'page arguments' => array(1),
+        'weight'            => -47,
+    );
+    // SURVEY ===============================
+    $items['surveymanagement'] = array(
+        'title' => t('题库管理'),
+        'page callback'     => 'review360_survey_management_view',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_survey_management.inc',
+        'weight'            => -47,
+    );
+    
+    $items['surveymanagement/add'] = array(
+        'title' => t('新增问卷'),
+        'page callback'     => 'save_new_survey_ajax',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_survey_management.inc',
+        'weight'            => -47,
+    );
+    
+    $items['surveymanagement/surveylist'] = array(
+        'title' => t('问卷管理'),
+        'page callback'     => 'get_survey_list_ajax',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_survey_management.inc',
+        'weight'            => -47,
+    );
+    
+    $items['surveymanagement/edit/%'] = array(
+        'title' => t('问卷修改'),
+        'page callback'     => 'review360_survey_edit',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_survey_management.inc',
+        'page arguments' => array(2),
+        'weight'            => -47,
+    );
+    
+    $items['surveymanagement/del'] = array(
+        'title' => t('删除用户'),
+        'page callback'     => 'review360_survey_del_ajax',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_survey_management.inc',
+        'weight'            => -47,
+    );
+     
+     $items['surveymanagement/export/%'] = array(
+        'title' => t('问卷修改'),
+        'page callback'     => 'review360_survey_export',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_survey_management.inc',
+        'page arguments' => array(2),
+        'weight'            => -47,
+    );
+    // EXAM ===============================
+    $items['exammanagement'] = array(
+        'title' => t('问卷管理'),
+        'page callback'     => 'review360_exam_management_view',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_exam_management.inc',
+        'weight'            => -47,
+    );
+   
+    $items['exammanagement/add'] = array(
+        'title' => t('新增问卷'),
+        'page callback'     => 'save_new_exam_group_ajax',
+        'access arguments'  => array('review360_exam_manage'),
+        'file'              => 'inc/admin/review360_exam_management.inc',
+        'weight'            => -47,
+    );
+    
+    $items['exammanagement/examlist'] = array(
+        'title' => t('问卷管理'),
+        'page callback'     => 'get_exam_list_ajax',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_exam_management.inc',
+        'weight'            => -47,
+    );
+    
+    $items['exammanagement/edit/%'] = array(
+        'title' => t('问卷修改'),
+        'page callback'     => 'review360_exam_edit',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_exam_management.inc',
+        'page arguments' => array(2),
+        'weight'            => -47,
+    );
+    
+     $items['exammanagement/changename'] = array(
+        'title' => t('问卷修改'),
+        'page callback'     => 'review360_group_change_name_ajax',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_exam_management.inc',
+        'weight'            => -47,
+    );
+    
+    $items['exammanagement/del'] = array(
+        'title' => t('问卷删除'),
+        'page callback'     => 'review360_exam_del_ajax',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_exam_management.inc',
+        'weight'            => -47,
+    );
+    
+    $items['exammanagement/upload/%'] = array(
+        'title' => t('导入问卷'),
+        'page callback'     => 'review360_exam_upload',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_exam_management.inc',
+        'page arguments' => array(2),
+        'weight'            => -47,
+    );
+     
+    $items['export_exam_file/%'] = array(
+        'title' => t('导出问卷'),
+        'page callback'     => 'export_exam_file',
+        'access arguments'  => array('review360_base`'),
+        'file'              => 'inc/admin/review360_exam_management.inc',
+        'page arguments' => array(1),
+        'weight'            => -47,
+    );
+    //================== member===================
+    $items['interviewer/onboard'] = array(
+        'title' => t('受访者登陆'),
+        'page callback'     => 'review360_interviewer_onboard',
+        'access arguments'  => array('review360_base_interviewer'),
+        'file'              => 'inc/member/review360_interviewer.inc',
+        'weight'            => -47,
+    );
+    
+    $items['interviewer/infor/%'] = array(
+        'title' => t('受访者信息管理'),
+        'page callback'     => 'review360_interviewer_infor',
+        'access arguments'  => array('review360_base_interviewer'),
+        'file'              => 'inc/member/review360_interviewer.inc',
+        'page arguments' => array(2),
+        'weight'            => -47,
+    );
+    
+    $items['interviewer/survey/%'] = array(
+        'title' => t('受访者信息管理'),
+        'page callback'     => 'review360_interviewer_survey',
+        'access arguments'  => array('review360_base_interviewer'),
+        'file'              => 'inc/member/review360_interviewer_survey.inc',
+        'page arguments' => array(2),
+        'weight'            => -47,
+    );
+    
+     $items['interviewer/survey/submitted/%'] = array(
+        'title' => t('受访者信息管理'),
+        'page callback'     => 'review360_interviewer_survey_submit',
+        'access arguments'  => array('review360_base_interviewer'),
+        'file'              => 'inc/member/review360_interviewer_survey.inc',
+        'page arguments' => array(3),
+        'weight'            => -47,
+    );
+
+    return $items;
+}
+
+function review360_base_dashboard_call_back() {
+    $pageContent = '<h2>欢迎使用本系统！</h2>';
+    return $pageContent;
+}
+
+function review360_base_block_info() {
+    $blocks['left_menu'] = array(
+        'info' => t('Left Menu'),
+        'cache' => DRUPAL_CACHE_PER_ROLE,
+    );
+    return $blocks;
+}
+
+function review360_base_block_view($delta = '') {
+    $block = array();
+    switch ($delta) {
+        case 'left_menu':
+            $output = theme('left_menu');
+            $block['content'] = $output;
+            break;
+    }
+    return $block;
+}
+
+function review360_base_theme() {
+    return array(
+        'left_menu' => array(
+            'template' => 'template/review360_base_left_menu',
+        ),
+         'right_content' => array(
+            'template' => 'template/review360_base_right_content',
+            'variables' => array('page_content' => NULL,'is_html'=>false),
+        ),
+        // ===================== admin====================================
+        'review360_base_config' => array(
+            'template' => 'template/admin/review360_base_config',
+        ),
+        'review360_group_edit' => array(
+            'template' => 'template/admin/review360_group_edit',
+            'variables' => array('group_id' => NULL),
+        ),
+         'review360_survey_view' => array(
+            'template' => 'template/admin/review360_survey_view',
+        ),
+        
+        'review360_exam_mg_view' => array(
+            'template' => 'template/admin/review360_exam_mg_view',
+        ),
+        'review360_exam_mg_edit' => array(
+            'template' => 'template/admin/review360_exam_mg_edit',
+            'variables' => array('exam_id' => NULL),
+        ),
+        'review360_survey_edit' => array(
+            'template' => 'template/admin/review360_survey_mg_edit',
+            'variables' => array('survey_id' => NULL),
+        ),
+        // ===================== member====================================
+        'review360_interviewer_onboard_view' => array(
+            'template' => 'template/member/review360_interviewer_onboard_view',
+//            'variables' => array('survey_id' => NULL),
+        ),
+         'review360_interviewer_infor_view' => array(
+            'template' => 'template/member/review360_interviewer_infor_view',
+            'variables' => array('user_key' => NULL),
+        ),
+        'review360_interviewer_survey_view' => array(
+            'template' => 'template/member/review360_interviewer_survey_view',
+            'variables' => array('user_key' => NULL),
+        ),
+        'review360_interviewer_survey_submitted' => array(
+            'template' => 'template/member/review360_interviewer_survey_submitted',
+            'variables' => array('user_key' => NULL),
+        ),
+        
+    );
+}
+
+function rend_block_by_name($model_name, $block_name) {
+    $block = block_load($model_name, $block_name);
+    return drupal_render(_block_get_renderable_array(_block_render_blocks(array($block))));
+}
+
+function rend_left_menu_li($get_q,$text,$path){
+    if(0 === strpos($get_q,$path)){
+        return ' <li role="presentation" class="active" >'. l($text,$path).'</li>';
+    } else {
+         return ' <li role="presentation">'. l($text,$path).'</li>';
+    }
+}
+
+function review360_base_export_file($fileName,$objPHPExcel){
+    header('Content-Type: application/vnd.ms-excel');
+    header('Content-Disposition: attachment;filename="'.$fileName.'"');
+    header('Cache-Control: max-age=0');
+    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+    $objWriter->save('php://output');
+}
+
+
+function random_string($length = 8) {
+    $str = '';
+    for ($i = 0; $i < $length; $i++) {
+        $str .= chr(mt_rand(65, 90));
+        $str .= chr(mt_rand(97, 122));
+    }
+    return $str;
+}
+
+function prepare_timestamp_to_str($timestamp){
+    if(!$timestamp) $timestamp = time();
+    return date('Y-m-d', $timestamp).'';
+}
+
+function prepare_date_to_timestamp($date_str){
+    return strtotime($date_str);
+}
+
+function prepare_form_stdClass($args){
+    $std = new stdClass();
+    if ($args && $args['build_info'] && $args['build_info']['args'])
+        $std = $args['build_info']['args'][0];
+    return $std;
+}
+
+function prepare_default_value($val){
+    if(isset($val)) return $val;
+    return '';
+}
+
+function get_user_infor_by_key($key){
+    $query = "select *  from review360_survey_user
+            where survey_user_key = '$key'";
+    $result = db_query($query)->fetchObject();
+    return $result;
+}
+
+function get_survey_by_id($survey_id){
+    $query = "select * from  review360_survey where survey_id = $survey_id";
+    $result = db_query($query)->fetchObject();
+    return $result;
+}

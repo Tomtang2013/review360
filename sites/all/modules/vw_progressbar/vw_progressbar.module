@@ -1,0 +1,87 @@
+<?php
+
+// $Id: vw_progressbar.info,v 1.4 2011/07/04 13:25:57 dries Exp $
+/**
+ * Implementation of hook_init
+ */
+function vw_progressbar_init() {
+    
+}
+
+function vw_progressbar_js_alter(&$javascript) {
+    
+}
+
+/**
+ * Implements hook_help().
+ */
+function vw_progressbar_help($path, $arg) {
+    switch ($path) {
+        case 'admin/help#vw_progressbar':
+            $output = '<h3>' . t('About') . '</h3>';
+            $output .= '<p>' . t('VW Progress Sample Model');
+            return $output;
+    }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function vw_progressbar_permission() {
+    return array(
+       
+    );
+}
+
+function vw_progressbar_menu() {
+    $items = array();
+     $items['vw/progress_example/progressbar'] = array(
+    'title' => 'Progress bar example',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('progress_example_progressbar_form'),
+    'access arguments' => array('access content'),
+    'file' => 'inc/progress_example_progressbar.inc',
+  );
+  // This is the callback route for the AJAX-based progress bar.
+  $items['vw/progress_example/progressbar/progress/%'] = array(
+    'title' => 'Progress bar progress',
+    'page callback' => 'progress_example_progressbar_progress',
+    'page arguments' => array(4),
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('access content'),
+    'file' => 'inc/progress_example_progressbar.inc',
+  );
+  
+  $items['vw/progress_example/progressbar/uploadtemp'] = array(
+        'title' => 'uploadtemp',
+        'page callback' => 'progress_example_uploadtemp',
+//    'page arguments' =>  array(2),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+        'file' => 'inc/progress_example_upload.inc',
+    );
+
+    return $items;
+}
+
+
+
+
+function vw_progressbar_theme() {
+    return array(
+        'resup_upload' => array(
+            'render element' => 'element',
+            'template' => 'template/drop_upload',
+        ),
+//         'left_menu' => array(
+//            
+//        ),
+    );
+}
+
+
+function theme_progress_upload($variables) {
+    return "<div>resup_upload</div>";
+//    <div class="file-resup-wrapper"><input class="file-resup file-resup-processed" data-upload-name="files[field_file_und_0]" data-upload-button-name="field_file_und_0_upload_button" data-max-filesize="2147483648" data-description="Files must be less than <strong>2 GB</strong>.<br />Allowed file types: <strong>txt</strong>." data-url="/review360/file_resup/upload/field_file/und/0/form-MEITBvRPZURqpoavwNqSpsdAeX-xJOpX1UA-jQVWFKY" data-drop-message="Drop a file here or click <em>Browse</em> below." data-extensions="txt" data-max-files="1" type="hidden" name="field_file[und][0][resup]" value="" id="file-resup-0">
+//<div class="item-list drop"><div class="drop-message">Drop a file here or click <em>Browse</em> below.</div></div><a href="#" class="button browse"><span>Browse</span></a><input type="file" class="element-invisible"><a href="#" class="button upload disabled"><span>Upload</span></a></div>
+}

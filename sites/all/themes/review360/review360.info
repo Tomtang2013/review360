@@ -1,0 +1,11 @@
+name = review360
+description = A subtheme of bootstrap, which is a flexible, recolorable theme with many regions.
+core = 7.x
+base theme = bootstrap
+
+stylesheets[all][] = css/review360.css
+stylesheets[all][] = css/docs.min.css
+
+
+;scripts[] = js/jquery.localscroll-1.2.7-min.js
+;settings[shortcut_module_link] = 0

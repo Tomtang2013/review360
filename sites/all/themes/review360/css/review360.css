@@ -1,0 +1,177 @@
+.have-input-box-tr td{
+    vertical-align:middle;
+}
+
+.form-control{
+    width:90%;
+}
+.icon_trash{
+    background-image: url(../img/icon_trash.png);
+    height:24px;
+    width:24px;
+    display:block;
+    background-repeat: no-repeat;
+}
+.icon_edit{
+     background-image: url(../img/icon_edit.png);
+    height:24px;
+    width:24px;
+    display:block;
+    background-repeat: no-repeat;
+}
+
+.icon_add{
+     background-image: url(../img/icon_add.png);
+    height:24px;
+    width:24px;
+    display:block;
+    background-repeat: no-repeat;
+    visibility:hidden;
+}
+
+.icon_ok{
+    background-image: url(../img/icon_ok.png);
+    height:32px;
+    width:32px;
+    display:block;
+    background-repeat: no-repeat;
+    visibility:hidden;
+}
+
+.icon_del{
+    background-image: url(../img/icon_del.png);
+    height:24px;
+    width:24px;
+    display:block;
+    /*background-repeat: no-repeat;*/
+}
+
+.icon_download{
+    background-image: url(../img/icon_download.png);
+    height:24px;
+    width:24px;
+    display:block;
+    /*background-repeat: no-repeat;*/
+}
+.icon_import{
+    background-image: url(../img/icon_import.png);
+    height:24px;
+    width:24px;
+    display:block;
+    /*background-repeat: no-repeat;*/
+}
+
+.icon_error{
+    background-image: url(../img/icon_error.png);
+    height:32px;
+    width:32px;
+    display:block;
+    background-repeat: no-repeat;
+    visibility:hidden;
+}
+
+.account-form-item{
+    padding-top:10px;
+    padding-bottom:10px;
+}
+
+.form-group{
+    margin-bottom:0px;
+}
+
+caption {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  color: #777;
+  text-align: left;
+}
+
+.form-line{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display:inline-block;
+}
+input.error{
+    color:#b94a48;
+    border-color:#EA0665;
+}
+
+.btn-icon{
+  cursor: pointer;
+}
+
+.user-infor-item{
+    padding-top:5px;
+    padding-bottom:5px;
+}
+
+.form-radio-btn{
+    border: 1px solid #ccc;
+        line-height: 1.428571429;
+}
+
+.form-radio-btn .radio{
+    display:inline-block;
+    margin-top:7px;
+    margin-bottom:7px;
+    margin-left:20px;
+    margin-right:20px;
+      
+}
+
+/* ===================== survey-user-exam-main ===================*/
+.survey-user-exam-main{
+    
+}
+
+.survey-user-exam-main .form-item {
+    display:inline-block;
+    padding-top:5px;
+    padding-bottom:5px;
+}
+
+.survey-user-exam-main .form-item label{
+    font-size: 18px;
+}
+
+.survey-user-exam-main .form-item .form-radios .form-type-radio{
+    display:inline-block;
+    padding-right:15px;
+}
+.survey-user-exam-main .form-item .form-radios .radio{
+    margin-bottom:10px;
+    margin-top:5px;
+}
+
+
+
+
+#dropbox .progressHolder{
+	position: absolute;
+	background-color:#252f38;
+	height:12px;
+	width:100%;
+	left:0;
+	bottom: 0;
+	
+	box-shadow:0 0 2px #000;
+}
+
+#dropbox .progress{
+	background-color:#2586d0;
+	position: absolute;
+	height:100%;
+	left:0;
+	width:0;
+	
+	box-shadow: 0 0 1px rgba(255, 255, 255, 0.4) inset;
+	
+	-moz-transition:0.25s;
+	-webkit-transition:0.25s;
+	-o-transition:0.25s;
+	transition:0.25s;
+}
+
+#dropbox .preview.done .progress{
+	width:100% !important;
+}

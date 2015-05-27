@@ -1,0 +1,10 @@
+name = Review 360  Base Model
+description = Review 360 Base Model.
+core = 7.x
+
+package = Review 360
+
+version = "7.x-1.0"
+core = "7.x"
+project = "accountinfo_base"
+datestamp = ""

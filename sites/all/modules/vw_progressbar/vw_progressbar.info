@@ -1,0 +1,10 @@
+name = VW Progress Sample model
+description = VW Progress Sample Model.
+core = 7.x
+
+package = VW
+
+version = "7.x-1.0"
+core = "7.x"
+project = "VW"
+datestamp = ""
