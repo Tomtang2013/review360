@@ -21,7 +21,7 @@ function review_interviewer_onboard_form($form_state, $args) {
             <div class="input-group col-md-12">
             <span class="input-group-addon" id="sizing-addon1">登陆邮箱</span> ',
         '#suffix' => '<span class="input-group-addon" id="basic-addon1">@</span></div></div>',
-//        '#default_value' => $survey->survey_name,
+//        '#default_value' => $infor->survey_name,
         '#attributes' => array(
             'class' => array(
                 'form-control',
@@ -36,7 +36,7 @@ function review_interviewer_onboard_form($form_state, $args) {
             <div class="input-group col-md-12">
             <span class="input-group-addon" id="sizing-addon1">识别代码</span> ',
         '#suffix' => '</div></div>',
-//        '#default_value' => $survey->survey_name,
+//        '#default_value' => $infor->survey_name,
         '#attributes' => array(
             'class' => array(
                 'form-control',
@@ -191,7 +191,7 @@ function review_interviewer_infor_form($form_state, $args) {
             <div class="input-group col-md-6 user-infor-item">
             <span class="input-group-addon" id="sizing-addon1">客户性别</span> ',
         '#suffix' => '</div></div></div>',
-        '#default_value' => prepare_default_value($user->u_name),
+        '#default_value' => prepare_default_value($user->u_sex),
         
         '#type' => 'radios',
         '#options' => drupal_map_assoc(
@@ -329,7 +329,7 @@ function review_interviewer_infor_form($form_state, $args) {
         '#type' => 'textfield',
         '#prefix' => '
             <div class="input-group col-md-6 user-infor-item">
-            <span class="input-group-addon" id="sizing-addon1">部门姓名</span> ',
+            <span class="input-group-addon" id="sizing-addon1">部门名称</span> ',
         '#suffix' => '</div></div>',
         '#default_value' => prepare_default_value($user->u_department),
         '#attributes' => array(
@@ -399,94 +399,61 @@ function review_interviewer_infor_form_validate($form, &$form_state) {
     if (empty($form_state['values']['infor_name'])) {
         form_set_error('infor_name',t("受访者姓名不能为空。"));
     }
+  
+    if (empty($form_state['values']['infor_sex'])) {
+        form_set_error('infor_sex',t("请选择性别。"));
+    }
+    
+    if (empty($form_state['values']['infor_company_name'])) {
+        form_set_error('infor_company_name',t("公司名称不能为空。"));
+    }
     
     $pattern = "/^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/";
     if( !preg_match( $pattern, $form_state['values']['infor_email'] )){
         form_set_error('infor_email', t('邮件地址不合法，请重新填写。'));
     } 
+    
+    $pattern = "/^13[0-9]{1}[0-9]{8}$|15[0189]{1}[0-9]{8}$|189[0-9]{8}$/";
+    if(!preg_match($pattern,$form_state['values']['infor_p_number'])){    
+        form_set_error('infor_p_number', t('手机号码不合法，请重新填写。'));
+    }
+    
+    
+    
+//    $pattern = "/^13[0-9]{1}[0-9]{8}$|15[0189]{1}[0-9]{8}$|189[0-9]{8}$/";
+//    if(!preg_match($pattern,$form_state['values']['infor_p_number'])){    
+//        form_set_error('infor_p_number', t('手机号码不合法，请重新填写。'));
+//    }
+//    
+   
 }
 
 function review_interviewer_infor_form_submit($form, &$form_state) {
+    $infor = $form_state['values'];
+    update_infor_by_key($infor);
     drupal_goto('interviewer/survey/'.$form_state['values']['infor_key']);
 }
 
+function update_infor_by_key($infor){
+    
+    db_update('review360_survey_user')
+            ->fields(array(
+                'u_email' => $infor['infor_email'],
+                'u_name' => $infor['infor_name'],
+                'u_sex' => $infor['infor_sex'],
+                'u_p_number' => $infor['infor_p_number'],
+                'u_bachelor' => $infor['infor_bachelor'],
+                'u_specialty' => $infor['infor_specialty'],
+                'u_university' => $infor['infor_university'],
+                'u_experience' => $infor['infor_experience'],
+                'u_engaged' => $infor['infor_engaged'],
+                'u_company_name' => $infor['infor_company_name'],
+                'u_department' => $infor['infor_department'],
+                'u_work_nature' => $infor['infor_work_nature'],
+                'update_date' => time(),
+            ))
+            ->condition('survey_user_key', $infor['infor_key'])
+            ->execute();
 
-function engaged_array(){
-    return array(
-            0 => '-- 请选择 --',
-            'IT/软硬件服务/电子商务/因特网运营' => 'IT/软硬件服务/电子商务/因特网运营',
-            '快速消费品(食品/饮料/化妆品)' => '快速消费品(食品/饮料/化妆品)',
-            '批发/零售' => '批发/零售',
-            '服装/纺织/皮革' => '服装/纺织/皮革',
-            '家具/工艺品/玩具' => '家具/工艺品/玩具',
-            '教育/培训/科研/院校' => '教育/培训/科研/院校',
-            '家电' => '家电',
-            '通信/电信运营/网络设备/增值服务' => '通信/电信运营/网络设备/增值服务',
-            '制造业 ' => '制造业',
-            '汽车及零配件' => '汽车及零配件',
-            '餐饮/娱乐/旅游/酒店/生活服务' => '餐饮/娱乐/旅游/酒店/生活服务',
-            '办公用品及设备' => '办公用品及设备',
-            '会计/审计' => '会计/审计',
-            '法律' => '法律',
-            '银行/保险/证券/投资银行/风险基金' => '银行/保险/证券/投资银行/风险基金',
-            '电子技术/半导体/集成电路' => '电子技术/半导体/集成电路',
-            '仪器仪表/工业自动化' => '仪器仪表/工业自动化',
-            '贸易/进出口' => '贸易/进出口',
-            '机械/设备/重工' => '机械/设备/重工',
-            '制药/生物工程/医疗设备/器械' => '制药/生物工程/医疗设备/器械',
-            '医疗/护理/保健/卫生' => '医疗/护理/保健/卫生',
-            '广告/公关/媒体/艺术' => '广告/公关/媒体/艺术',
-            '出版/印刷/包装' => '出版/印刷/包装',
-            '房地产开发/建筑工程/装潢/设计' => '房地产开发/建筑工程/装潢/设计',
-            '物业管理/商业中心' => '物业管理/商业中心',
-            '中介/咨询/猎头/认证' => '中介/咨询/猎头/认证',
-            '交通/运输/物流' => '交通/运输/物流',
-            '航天/航空/能源/化工' => '航天/航空/能源/化工',
-            '农业/渔业/林业' => '农业/渔业/林业',
-            '其他行业' => '其他行业',
-        );
+    drupal_set_message(t("个人信息保存成功，请开始答题。"));
 }
-
-function experience_array(){
-    return array(
-            0=>'-- 请选择 --',
-            1=>'1年以下',
-            2=>'1~2年',
-            3=>'2~3年',
-            4=>'3~5年',
-            5=>'5~10年',
-            6=>'10~20年',
-            7=>'20年以上',
-        );
-}
-
-function specialty_array(){
-    return array(
-            0 => '-- 请选择 --',
-            '哲学' => '哲学',
-            '经济学' => '经济学',
-            '法学' => '法学',
-            '教育学' => '教育学',
-            '文学' => '文学',
-            '历史学' => '历史学',
-            '理学' => '理学',
-            '工学' => '工学',
-            '农学' => '农学',
-            '医学' => '医学',
-            '哲学' => '军事学',
-            '管理学' => '管理学',
-        );
-}
-
-function bachelor_array(){
-    return array(
-            0=>'-- 请选择 --',
-            1=>'高中以下',
-            2=>'中专或高中',
-            3=>'大专',
-            4=>'大学本科',
-            5=>'硕士研究生',
-            6=>'博士研究生及以上',
-        );
-}
-

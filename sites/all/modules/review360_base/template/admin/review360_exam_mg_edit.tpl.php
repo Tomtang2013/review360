@@ -34,7 +34,9 @@
         </div>
         <hr/>
         <label>问卷上传:</label>
-        <?php print drupal_render(drupal_get_form('review360_exam_upload_form',$exam)) ;?>
+        <?php 
+        $form = drupal_get_form('review360_exam_upload_form',$exam);
+        print drupal_render($form) ;?>
     </div>
     <div class="col-lg-8" style='padding-top: 5px;'>
         <span class="label label-warning">请选择导入的文本文件为以下类型：</span>

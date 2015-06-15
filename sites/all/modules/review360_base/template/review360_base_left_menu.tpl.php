@@ -5,6 +5,7 @@ global $user; if($user->uid > 0):?>
     <h4><strong>工作栏</strong></h4>
     <ul class="nav nav-pills nav-stacked" role="tablist" style="max-width: 300px;">
         <?php print rend_left_menu_li($get_q,'用户管理','usermanagement')?>
+        <?php print rend_left_menu_li($get_q,'用户筛选','candidate/filter')?>
         <?php print rend_left_menu_li($get_q,'调查管理','surveymanagement')?>
         <?php print rend_left_menu_li($get_q,'题库管理','exammanagement')?>
     </ul>

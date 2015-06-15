@@ -83,12 +83,12 @@ drupal_add_js(drupal_get_path('module', 'review360_base') . '/js/member/school.j
 
 <style>
     #choose-box-wrapper{
-        width: 502px;
+      //  width: 502px;
         padding:10px;
         padding-top:0;
     }
     #choose-box{
-        width:500px;
+      //  max-width:500px;
         background-color:white;
     }
     #choose-box-title{
@@ -150,8 +150,8 @@ drupal_add_js(drupal_get_path('module', 'review360_base') . '/js/member/school.j
         cursor:pointer;
     }
 </style>
-<div id="choose-box-wrapper">
-    <div id="choose-box">
+<div id="choose-box-wrapper" class="row">
+    <div id="choose-box" class="col-md-12">
         <div id="choose-box-title">
             <span>选择学校</span>
         </div>

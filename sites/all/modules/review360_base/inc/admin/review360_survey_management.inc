@@ -322,9 +322,30 @@ function review360_survey_edit_form($form_state, $args) {
             '#prefix' => '<div class="col-md-12 form-line">'
             . '<div class="btn-group col-md-6  " role="group" aria-label="" >'
             . '<span class="input-group-btn">',
+          
+        ); 
+        
+         $form['submit_export_report'] = array(
+            '#type' => 'button',
+            '#default_value' => '导出报告',
+            '#attributes' => array(
+                'class' => array(
+                    'btn btn-primary',
+                ),
+                'data-loading-text'=>'准备导出...',
+                'data-toggle' =>'tooltip',
+                'data-placement'=>'bottom',
+                'title'=>'只有已经完成的文件会生成报告并导出。'
+            ),
+            
             '#suffix' => '</span></div></div>',
         ); 
     }
+    
+      if($survey->survey_status == 2 ||
+              $survey->survey_status == 3){
+        
+     }
     
     return $form;
 }

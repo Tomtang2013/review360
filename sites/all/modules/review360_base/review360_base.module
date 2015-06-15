@@ -165,6 +165,14 @@ function review360_base_menu() {
         'page arguments' => array(2),
         'weight'            => -47,
     );
+     
+    $items['surveymanagement/init'] = array(
+        'title' => t('初始化评分标准'),
+        'page callback'     => 'review360_surveymanagement_init_call_back',
+        'file'              => 'inc/admin/review360_survey_management_init.inc',
+        'access arguments'  => array('review360_base'),
+        'weight'            => -47,
+    );
     // EXAM ===============================
     $items['exammanagement'] = array(
         'title' => t('问卷管理'),
@@ -232,6 +240,23 @@ function review360_base_menu() {
         'page arguments' => array(1),
         'weight'            => -47,
     );
+    // ===================== user filter===================
+    $items['candidate/filter'] = array(
+        'title' => t('用户筛选'),
+        'page callback'     => 'review360_candidate_filter_view',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_candidate_filter.inc',
+        'weight'            => -47,
+    );
+    
+    $items['candidate/filter/surveyrst'] = array(
+        'title' => t('用户筛选'),
+        'page callback'     => 'get_survey_rst_ajax',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_candidate_filter.inc',
+        'weight'            => -47,
+    );
+    
     //================== member===================
     $items['interviewer/onboard'] = array(
         'title' => t('受访者登陆'),
@@ -326,6 +351,12 @@ function review360_base_theme() {
         'review360_survey_edit' => array(
             'template' => 'template/admin/review360_survey_mg_edit',
             'variables' => array('survey_id' => NULL),
+        ),
+        //===================== user filter================
+        //review360_candidate_filter_view
+        'review360_candidate_filter_view' => array(
+            'template' => 'template/admin/review360_candidate_filter_view',
+         //   'variables' => array('survey_id' => NULL),
         ),
         // ===================== member====================================
         'review360_interviewer_onboard_view' => array(
@@ -444,3 +475,83 @@ function object_to_array($object) {
     }  
     return $array;  
 }  
+
+
+function engaged_array(){
+    return array(
+            0 => '-- 请选择 --',
+            'IT/软硬件服务/电子商务/因特网运营' => 'IT/软硬件服务/电子商务/因特网运营',
+            '快速消费品(食品/饮料/化妆品)' => '快速消费品(食品/饮料/化妆品)',
+            '批发/零售' => '批发/零售',
+            '服装/纺织/皮革' => '服装/纺织/皮革',
+            '家具/工艺品/玩具' => '家具/工艺品/玩具',
+            '教育/培训/科研/院校' => '教育/培训/科研/院校',
+            '家电' => '家电',
+            '通信/电信运营/网络设备/增值服务' => '通信/电信运营/网络设备/增值服务',
+            '制造业 ' => '制造业',
+            '汽车及零配件' => '汽车及零配件',
+            '餐饮/娱乐/旅游/酒店/生活服务' => '餐饮/娱乐/旅游/酒店/生活服务',
+            '办公用品及设备' => '办公用品及设备',
+            '会计/审计' => '会计/审计',
+            '法律' => '法律',
+            '银行/保险/证券/投资银行/风险基金' => '银行/保险/证券/投资银行/风险基金',
+            '电子技术/半导体/集成电路' => '电子技术/半导体/集成电路',
+            '仪器仪表/工业自动化' => '仪器仪表/工业自动化',
+            '贸易/进出口' => '贸易/进出口',
+            '机械/设备/重工' => '机械/设备/重工',
+            '制药/生物工程/医疗设备/器械' => '制药/生物工程/医疗设备/器械',
+            '医疗/护理/保健/卫生' => '医疗/护理/保健/卫生',
+            '广告/公关/媒体/艺术' => '广告/公关/媒体/艺术',
+            '出版/印刷/包装' => '出版/印刷/包装',
+            '房地产开发/建筑工程/装潢/设计' => '房地产开发/建筑工程/装潢/设计',
+            '物业管理/商业中心' => '物业管理/商业中心',
+            '中介/咨询/猎头/认证' => '中介/咨询/猎头/认证',
+            '交通/运输/物流' => '交通/运输/物流',
+            '航天/航空/能源/化工' => '航天/航空/能源/化工',
+            '农业/渔业/林业' => '农业/渔业/林业',
+            '其他行业' => '其他行业',
+        );
+}
+
+function experience_array(){
+    return array(
+            0=>'-- 请选择 --',
+            1=>'1年以下',
+            2=>'1~2年',
+            3=>'2~3年',
+            4=>'3~5年',
+            5=>'5~10年',
+            6=>'10~20年',
+            7=>'20年以上',
+        );
+}
+
+function specialty_array(){
+    return array(
+            0 => '-- 请选择 --',
+            '哲学' => '哲学',
+            '经济学' => '经济学',
+            '法学' => '法学',
+            '教育学' => '教育学',
+            '文学' => '文学',
+            '历史学' => '历史学',
+            '理学' => '理学',
+            '工学' => '工学',
+            '农学' => '农学',
+            '医学' => '医学',
+            '哲学' => '军事学',
+            '管理学' => '管理学',
+        );
+}
+
+function bachelor_array(){
+    return array(
+            0=>'-- 请选择 --',
+            1=>'高中以下',
+            2=>'中专或高中',
+            3=>'大专',
+            4=>'大学本科',
+            5=>'硕士研究生',
+            6=>'博士研究生及以上',
+        );
+}

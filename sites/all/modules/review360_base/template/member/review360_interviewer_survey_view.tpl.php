@@ -43,14 +43,22 @@ $node = node_load($user->nid);
         var exam_body = table_body.find('.exam_body');
         var exam_row = null;
         var label = null;
+        var rows = [];
         for(var i in labels){
             label = labels[i];
             exam_row = jQuery('<tr></tr>');
             exam_row.append(jQuery('<th scope="row"> <label>'+label+'</label></th>'));
             exam_row.append(prepareTD(radiosA[i]));
             exam_row.append(prepareTD(radiosB[i]));
-            exam_body.append(exam_row);
+            rows.push(exam_row);
         }
+        
+        rows.sort(function(){return Math.random()>0.5?-1:1;}); 
+        
+        for(var i in rows){
+            exam_body.append(rows[i]);
+        }
+        
         var panel_body = jQuery('.webform-component-fieldset').find('.panel-body');
         panel_body.empty();
         panel_body.append(table_body);
