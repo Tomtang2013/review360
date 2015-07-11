@@ -157,9 +157,18 @@ function review360_base_menu() {
         'weight'            => -47,
     );
      
-     $items['surveymanagement/export/%'] = array(
+    $items['surveymanagement/export/%'] = array(
         'title' => t('问卷修改'),
         'page callback'     => 'review360_survey_export',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_survey_management.inc',
+        'page arguments' => array(2),
+        'weight'            => -47,
+    );
+    
+    $items['surveymanagement/report_export/%'] = array(
+        'title' => t('问卷修改'),
+        'page callback'     => 'review360_survey_report_export',
         'access arguments'  => array('review360_base'),
         'file'              => 'inc/admin/review360_survey_management.inc',
         'page arguments' => array(2),
@@ -173,6 +182,16 @@ function review360_base_menu() {
         'access arguments'  => array('review360_base'),
         'weight'            => -47,
     );
+    
+     $items['surveymanagement/generatereport'] = array(
+        'title' => t('初始化评分标准'),
+        'page callback'     => 'generate_survey_result',
+//        'file'              => 'inc/admin/review360_survey_management_init.inc',
+        'access arguments'  => array('review360_base'),
+        'weight'            => -47,
+    );
+    
+    
     // EXAM ===============================
     $items['exammanagement'] = array(
         'title' => t('问卷管理'),
@@ -407,6 +426,15 @@ function review360_base_export_file($fileName,$objPHPExcel){
     $objWriter->save('php://output');
 }
 
+function review360_base_export_zip_file($file_name,$get_url){
+    header("Content-Type: application/force-download");
+    header("Content-Transfer-Encoding: binary");
+    header('Content-Type: application/zip');
+    header('Content-Disposition: attachment; filename='.$file_name);
+    header("Connection: close");
+    readfile($get_url);
+    return true;
+}
 
 function random_string($length = 8) {
     $str = '';
@@ -554,4 +582,175 @@ function bachelor_array(){
             5=>'硕士研究生',
             6=>'博士研究生及以上',
         );
+}
+
+
+function generate_survey_result(){
+    $query = "select *  from review360_survey_user";
+    $users = db_query($query)->fetchAll();
+    foreach($users as  $user){
+        generate_survey_result_by_sv($user);
+    }
+}
+
+function generate_survey_result_by_sv($user){
+    if(!$user->u_email) return;
+    //is_generate_result == 1 already generate result;
+    if($user->is_generate_result){
+        return;
+    }
+    // verify user is submit or not;
+    if(!$user->is_submit){
+        $user->is_submit = is_submit($user->nid,$user->su_id);
+    } 
+    // still not submit continue;
+    if(!$user->is_submit){
+        return;
+    }
+
+    $result = get_survey_rst_by_nid($user->nid);
+    insert_user_survey_result($result->in_working_me,$user->survey_id,$user->su_id,$user->nid,"in_working_me");
+    insert_user_survey_result($result->innate,$user->survey_id,$user->su_id,$user->nid,"innate");
+    insert_user_survey_result($result->other,$user->survey_id,$user->su_id,$user->nid,"other");
+    insert_user_survey_result($result->stress,$user->survey_id,$user->su_id,$user->nid,"stress");
+
+    update_status_of_generate_report($user->su_id);
+}
+
+function insert_user_survey_result($rst,$sid,$uid,$nid,$quadrant){
+    $field_array = array();
+    $field_array['sid'] = $sid;
+    $field_array['su_id'] = $uid;
+    $field_array['nid'] = $nid;
+    $field_array['quadrant'] = $quadrant;
+    $field_array['d'] = $rst->d;
+    $field_array['i'] = $rst->i;
+    $field_array['s'] = $rst->s;
+    $field_array['c'] = $rst->c;
+    $field_array['update_date'] = time();
+    $field_array['create_date'] = time();
+    $rst = db_insert('review360_survey_result')->fields($field_array)->execute();
+}
+
+function is_submit($nid,$su_id){
+    $query = "select count(nid) num from webform_submissions where nid = $nid";
+    $result = db_query($query)->fetchObject();
+    if($result->num >0) {
+        db_update('review360_survey_user')
+         ->fields(array(
+               'is_submit' => 1,
+               'update_date' => time(),
+           ))
+         ->condition('su_id', $su_id)
+         ->execute();
+        return 1;
+    }
+    return 0;
+}
+
+function update_status_of_generate_report($su_id){
+   return db_update('review360_survey_user')
+         ->fields(array(
+               'is_generate_result' => 1,
+               'update_date' => time(),
+           ))
+         ->condition('su_id', $su_id)
+         ->execute();
+}
+
+function get_survey_rst_by_nid($nid){
+    $dis_like_str  = '最不符合';
+    $like_str= '最符合';
+//    $nid = create_new_webform_node($survey_name);
+    $query = "select wc.name,wsd.cid,wsd.data from webform_component wc
+        inner join webform_submitted_data
+        wsd on wc.nid = wsd.nid and wc.cid = wsd.cid
+        where wc.nid = $nid
+        and (wc.name = '$dis_like_str' or wc.name = '$like_str')
+        group by wc.name,wsd.cid";
+
+    $query_rst = db_query($query)->fetchAll();
+    $like = prepare_rst_std('like');
+    $dis_like = prepare_rst_std('dis_like');
+    foreach($query_rst as $item){
+        if($item->name == $dis_like_str){
+            sum_rst_data($item,$dis_like);
+        } else if($item->name == $like_str){
+            sum_rst_data($item,$like);
+        }
+    }
+   
+    return generate_survey_rst($like,$dis_like);
+}
+
+function prepare_rst_std($type){
+    $std = new stdClass();
+    $std->type = $type;
+    $std->d =0;
+    $std->i =0;
+    $std->s =0;
+    $std->c =0;
+    return $std;
+}
+
+function sum_rst_data($item,&$std){
+   switch($item->data){
+       case 'D': $std->d++; return $std;
+       case 'I': $std->i++; return $std;
+       case 'S': $std->s++; return $std;
+       case 'C': $std->c++; return $std;
+   }
+   return $std;
+}
+
+function prepare_result($like,$dis_like,$type){
+    switch($type){
+       case 'd': return prepare_result_parm($like->d,$dis_like->d);
+       case 'i': return prepare_result_parm($like->i,$dis_like->i);
+       case 's': return prepare_result_parm($like->s,$dis_like->s);
+       case 'c': return prepare_result_parm($like->c,$dis_like->c);
+    }
+}
+
+function prepare_result_parm($like,$dis_like){
+    $std = new stdClass();
+    $std->in_working_me = $like;
+    $std->innate = 6 - $dis_like;
+    $std->other = $std->in_working_me + $std->innate;
+    $std->stress = $std->in_working_me - $std->innate;
+    return $std;
+}
+
+function generate_survey_rst($like,$dis_like){
+    $d = prepare_result($like,$dis_like,'d');
+    $i = prepare_result($like,$dis_like,'i');
+    $s = prepare_result($like,$dis_like,'s');
+    $c = prepare_result($like,$dis_like,'c');
+    
+    $rst = new stdClass();
+    $rst->in_working_me = new stdClass();
+    $rst->in_working_me->d = $d->in_working_me;
+    $rst->in_working_me->i = $i->in_working_me;
+    $rst->in_working_me->s = $s->in_working_me;
+    $rst->in_working_me->c = $c->in_working_me;
+    
+    $rst->innate = new stdClass();
+    $rst->innate->d = $d->innate;
+    $rst->innate->i = $i->innate;
+    $rst->innate->s = $s->innate;
+    $rst->innate->c = $c->innate;
+    
+    $rst->other = new stdClass();
+    $rst->other->d = $d->other;
+    $rst->other->i = $i->other;
+    $rst->other->s = $s->other;
+    $rst->other->c = $c->other;
+    
+    $rst->stress = new stdClass();
+    $rst->stress->d = $d->stress;
+    $rst->stress->i = $i->stress;
+    $rst->stress->s = $s->stress;
+    $rst->stress->c = $c->stress;
+    
+    return $rst;
 }

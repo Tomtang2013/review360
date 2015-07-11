@@ -6,6 +6,8 @@ global $base_url;
 $survey = get_survey_by_id($survey_id);
 $survey_edit_submit_url = $base_url . '/surveymanagement/submit/';
 $survey_file_export_url = $base_url . '/surveymanagement/export/';
+$survey_report_export_url = $base_url . '/surveymanagement/report_export/';
+
 
 $exams = get_selectable_exam();
 ?>
@@ -68,6 +70,8 @@ $exams = get_selectable_exam();
 <input id="survey_id" type="hidden" value="<?php print $survey->survey_id; ?>"/>
 <input id="survey_edit_submit_url" type="hidden" value="<?php print $survey_edit_submit_url; ?>"/>
 <input id="survey_file_export_url" type="hidden" value="<?php print $survey_file_export_url . $survey->survey_id; ?>"/>
+<input id="survey_report_export_url" type="hidden" value="<?php print $survey_report_export_url . $survey->survey_id; ?>"/>
+
 
 <div class="row" style='margin-right:15px;margin-left:15px;'>
     <label>问卷编辑:</label>

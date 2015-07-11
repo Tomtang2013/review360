@@ -33,23 +33,23 @@
                 var value = rsp.rst;
                 var tb = jQuery('#survey_rst_table_tb');
                 tb.empty();
-                
-                tb.append(prepare_tr('D',value.in_working_me.d,
-                                value.innate.d,
-                                value.other.d,
-                                value.stress.d));
-                tb.append(prepare_tr('I',value.in_working_me.i,
-                                value.innate.i,
-                                value.other.i,
-                                value.stress.i));
-                tb.append(prepare_tr('S',value.in_working_me.s,
-                                value.innate.s,
-                                value.other.s,
-                                value.stress.s ));
-                tb.append(prepare_tr('C', value.in_working_me.c,
-                                value.innate.c,
-                                value.other.c,
-                                value.stress.c ));
+
+                tb.append(prepare_tr('D',value[0].d,
+                                value[1].d,
+                                value[2].d,
+                                value[3].d));
+                tb.append(prepare_tr('I',value[0].i,
+                                value[1].i,
+                                value[2].i,
+                                value[3].i));
+                tb.append(prepare_tr('S',value[0].s,
+                                value[1].s,
+                                value[2].s,
+                                value[3].s ));
+                tb.append(prepare_tr('C', value[0].c,
+                                value[1].c,
+                                value[2].c,
+                                value[3].c ));
                 
                 jQuery('#rstViewBox').modal({
                     keyboard: true

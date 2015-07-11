@@ -340,107 +340,27 @@ function search_infor_by_condition($query){
 }
 function get_survey_rst_ajax(){
     $nid = $_POST['nid'];
-    $rst = get_survey_rst_by_nid($nid);
+    $rst = get_survey_rst_from_db($nid);
     if ($rst) {
         echo drupal_json_output(array('status' => 'success','rst'=>$rst));
     } else {
-        echo drupal_json_output(array('status' => 'failed','rst'=>$rst));
-    }
-}
-
-function get_survey_rst_by_nid($nid){
-    $dis_like_str  = '最不符合';
-    $like_str= '最符合';
-//    $nid = create_new_webform_node($survey_name);
-    $query = "select wc.name,wsd.cid,wsd.data from webform_component wc
-        inner join webform_submitted_data
-        wsd on wc.nid = wsd.nid and wc.cid = wsd.cid
-        where wc.nid = $nid
-        and (wc.name = '$dis_like_str' or wc.name = '$like_str')
-        group by wc.name,wsd.cid";
-
-    $query_rst = db_query($query)->fetchAll();
-    $like = prepare_rst_std('like');
-    $dis_like = prepare_rst_std('dis_like');
-    foreach($query_rst as $item){
-        if($item->name == $dis_like_str){
-            sum_rst_data($item,$dis_like);
-        } else if($item->name == $like_str){
-            sum_rst_data($item,$like);
+        $sv = load_survey_by_nid($nid);
+        generate_survey_result_by_sv($sv);
+        $rst = get_survey_rst_from_db($nid);
+        if ($rst) {
+            echo drupal_json_output(array('status' => 'success','rst'=>$rst));
+        } else{
+            echo drupal_json_output(array('status' => 'failed','rst'=>$rst));
         }
     }
-   
-    return generate_survey_rst($like,$dis_like);
 }
 
-function prepare_rst_std($type){
-    $std = new stdClass();
-    $std->type = $type;
-    $std->d =0;
-    $std->i =0;
-    $std->s =0;
-    $std->c =0;
-    return $std;
+function get_survey_rst_from_db($nid){
+    $query = "select *  from review360_survey_result where nid = $nid";
+    return db_query($query)->fetchAll();
 }
 
-function sum_rst_data($item,&$std){
-   switch($item->data){
-       case 'D': $std->d++; return $std;
-       case 'I': $std->i++; return $std;
-       case 'S': $std->s++; return $std;
-       case 'C': $std->c++; return $std;
-   }
-   return $std;
-}
-
-function prepare_result($like,$dis_like,$type){
-    switch($type){
-       case 'd': return prepare_result_parm($like->d,$dis_like->d);
-       case 'i': return prepare_result_parm($like->i,$dis_like->i);
-       case 's': return prepare_result_parm($like->s,$dis_like->s);
-       case 'c': return prepare_result_parm($like->c,$dis_like->c);
-    }
-}
-
-function prepare_result_parm($like,$dis_like){
-    $std = new stdClass();
-    $std->in_working_me = $like;
-    $std->innate = 6 - $dis_like;
-    $std->other = $std->in_working_me + $std->innate;
-    $std->stress = $std->in_working_me - $std->innate;
-    return $std;
-}
-
-function generate_survey_rst($like,$dis_like){
-    $d = prepare_result($like,$dis_like,'d');
-    $i = prepare_result($like,$dis_like,'i');
-    $s = prepare_result($like,$dis_like,'s');
-    $c = prepare_result($like,$dis_like,'c');
-    
-    $rst = new stdClass();
-    $rst->in_working_me = new stdClass();
-    $rst->in_working_me->d = $d->in_working_me;
-    $rst->in_working_me->i = $i->in_working_me;
-    $rst->in_working_me->s = $s->in_working_me;
-    $rst->in_working_me->c = $c->in_working_me;
-    
-    $rst->innate = new stdClass();
-    $rst->innate->d = $d->innate;
-    $rst->innate->i = $i->innate;
-    $rst->innate->s = $s->innate;
-    $rst->innate->c = $c->innate;
-    
-    $rst->other = new stdClass();
-    $rst->other->d = $d->other;
-    $rst->other->i = $i->other;
-    $rst->other->s = $s->other;
-    $rst->other->c = $c->other;
-    
-    $rst->stress = new stdClass();
-    $rst->stress->d = $d->stress;
-    $rst->stress->i = $i->stress;
-    $rst->stress->s = $s->stress;
-    $rst->stress->c = $c->stress;
-    
-    return $rst;
+function load_survey_by_nid($nid){
+    $query = "select * from review360_survey where nid = $nid";
+    return db_query($query)->fetchObject();
 }

@@ -1,5 +1,6 @@
 <?php
 require_once dirname(__FILE__) . '/../../lib/PHPExcel/PHPExcel/IOFactory.php';
+defined('DEFAULT_WORDPATH') or define('DEFAULT_WORDPATH', 'sites/default/files/generateFiles/');
 
 function review360_survey_management_view(){
     $action_name = theme('review360_survey_view');
@@ -21,8 +22,53 @@ function  review360_survey_export($survey_id){
     $date = date("Y_m_d", time());
     $fileName .= "_{$date}.xls";
     
-   export_user_key($survey,$fileName);
+    export_user_key($survey,$fileName);
 }
+
+function review_survey_report_generate($survey_id){
+    $query = "select *  from review360_survey_user where survey_id = $survey_id and is_generate_result = 1";
+    $users = db_query($query)->fetchAll();
+    $function = 'generate_survey_user_report_batch';
+    $batch = $function($users);
+    batch_set($batch);
+}
+
+function review360_survey_report_export($survey_id) {
+    $survey = get_survey_by_id($survey_id);
+    $file_name = $survey->survey_name . ".zip";
+    $src_file_name = $survey_id . ".zip";
+    $get_url = DEFAULT_WORDPATH . $src_file_name;
+    $get_url = drupal_realpath($get_url);
+    review360_base_export_zip_file($file_name, $get_url);
+}
+
+function generate_survey_user_report_batch($users){
+    
+  $operations = array();
+
+  foreach($users as $user){
+      $operations[] = array(
+        'generate_survey_user_report_do_batch',
+        array(
+          $user,
+        ),
+      );
+  }
+
+    $batch = array(
+        'operations' => $operations,
+        'finished' => 'generate_survey_user_report_finish',
+        'title' => t('报告生成'),
+        'init_message' => t('生成中....'),
+        'progress_message' => t('已经生成 @current 总共 @total.'),
+        'error_message' => t('生成错误请联系管理员.'),
+        'file' => drupal_get_path('module', 'review360_base') . '/inc/admin/batch/generate_survey_batch.inc',
+    );
+    return $batch;
+}
+
+
+
 
 function export_user_key($survey,$fileName){
 
@@ -324,22 +370,55 @@ function review360_survey_edit_form($form_state, $args) {
             . '<span class="input-group-btn">',
           
         ); 
-        
-         $form['submit_export_report'] = array(
-            '#type' => 'button',
-            '#default_value' => '导出报告',
-            '#attributes' => array(
-                'class' => array(
-                    'btn btn-primary',
+        if($survey->is_generate_report == 0){
+            $form['submit_generate_report'] = array(
+                '#type' => 'submit',
+                '#default_value' => '生成报告',
+                '#attributes' => array(
+                    'class' => array(
+                        'btn btn-primary',
+                    ),
+                    'data-loading-text'=>'准备导出...',
+                    'data-toggle' =>'tooltip',
+                    'data-placement'=>'bottom',
+                    'title'=>'只有已经完成的调查会生成报告。'
                 ),
-                'data-loading-text'=>'准备导出...',
-                'data-toggle' =>'tooltip',
-                'data-placement'=>'bottom',
-                'title'=>'只有已经完成的文件会生成报告并导出。'
-            ),
-            
-            '#suffix' => '</span></div></div>',
-        ); 
+
+                '#suffix' => '</span></div></div>',
+            ); 
+        }else{
+             $form['submit_generate_report'] = array(
+                '#type' => 'submit',
+                '#default_value' => '生成报告',
+                '#attributes' => array(
+                    'class' => array(
+                        'btn btn-primary',
+                    ),
+                    'data-loading-text'=>'报告生成...',
+                    'data-toggle' =>'tooltip',
+                    'data-placement'=>'bottom',
+                    'title'=>'只有已经完成的调查会生成报告。'
+                ),
+
+                '#suffix' => '',
+            ); 
+            $form['submit_export_report'] = array(
+                '#type' => 'button',
+                '#default_value' => '下载报告',
+                '#attributes' => array(
+                    'class' => array(
+                        'btn ',
+                    ),
+                    'data-loading-text'=>'准备导出...',
+                    'data-toggle' =>'tooltip',
+                    'data-placement'=>'bottom',
+                    'title'=>'只有已经完成的调查会被导出。'
+                ),
+
+                '#suffix' => '</span></div></div>',
+            ); 
+        }
+         
     }
     
       if($survey->survey_status == 2 ||
@@ -446,6 +525,8 @@ function review360_survey_edit_form_submit($form, &$form_state) {
             ->condition('survey_id', $survey['survey_id'])
             ->execute();
 //        drupal_set_message(t("生成用户问卷 $counter 份。"));
+    } else if('生成报告' === $form_state['values']['op'] ){
+        review_survey_report_generate($survey['survey_id']);
     }
 }
 
@@ -498,7 +579,6 @@ function genrate_user_exam($s_id){
     $batch = $function($users,$survey,$old_node);
 //          
     batch_set($batch);
-//    return $counter;
 }
 
 function genrate_user_exam_do_batch($user,$survey,$old_node, &$context){
