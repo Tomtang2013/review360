@@ -436,7 +436,7 @@ function review_interviewer_infor_form_submit($form, &$form_state) {
 
 function update_infor_by_key($infor){
     
-    db_update('review360_survey_user')
+    $q = db_update('review360_survey_user')
             ->fields(array(
                 'u_email' => $infor['infor_email'],
                 'u_name' => $infor['infor_name'],
@@ -452,8 +452,10 @@ function update_infor_by_key($infor){
                 'u_work_nature' => $infor['infor_work_nature'],
                 'update_date' => time(),
             ))
-            ->condition('survey_user_key', $infor['infor_key'])
-            ->execute();
+            ->condition('survey_user_key', $infor['infor_key']);
+			
+			
+            $q->execute();
 
     drupal_set_message(t("个人信息保存成功，请开始答题。"));
 }

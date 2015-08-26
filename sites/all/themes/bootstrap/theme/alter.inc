@@ -18,13 +18,15 @@ function bootstrap_css_alter(&$css) {
   if ($bootstrap_cdn) {
     // Add CDN.
     if (theme_get_setting('bootstrap_bootswatch')) {
-      $cdn = '//netdna.bootstrapcdn.com/bootswatch/' . $bootstrap_cdn  . '/' . theme_get_setting('bootstrap_bootswatch') . '/bootstrap.min.css';
+      $cdn = "";//'//netdna.bootstrapcdn.com/bootswatch/' . $bootstrap_cdn  . '/' . theme_get_setting('bootstrap_bootswatch') . '/bootstrap.min.css';
     }
     else {
+//      $cdn = "";//'//netdna.bootstrapcdn.com/bootstrap/' . $bootstrap_cdn  . '/css/bootstrap.min.css';
       $cdn = '//netdna.bootstrapcdn.com/bootstrap/' . $bootstrap_cdn  . '/css/bootstrap.min.css';
     }
     $css[$cdn] = array(
-      'data' => $cdn,
+//      'data' => "",
+        'data' =>$cdn,
       'type' => 'external',
       'every_page' => TRUE,
       'media' => 'all',
@@ -231,7 +233,7 @@ function bootstrap_js_alter(&$js) {
 
   // Add CDN.
   if (theme_get_setting('bootstrap_cdn')) {
-    $cdn = '//netdna.bootstrapcdn.com/bootstrap/' . theme_get_setting('bootstrap_cdn')  . '/js/bootstrap.min.js';
+    $cdn = "";//'//netdna.bootstrapcdn.com/bootstrap/' . theme_get_setting('bootstrap_cdn')  . '/js/bootstrap.min.js';
     $js[$cdn] = drupal_js_defaults();
     $js[$cdn]['data'] = $cdn;
     $js[$cdn]['type'] = 'external';

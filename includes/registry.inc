@@ -166,7 +166,7 @@ function _registry_parse_files($files) {
 function _registry_parse_file($filename, $contents, $module = '', $weight = 0) {
   if (preg_match_all('/^\s*(?:abstract|final)?\s*(class|interface)\s+([a-zA-Z0-9_]+)/m', $contents, $matches)) {
     foreach ($matches[2] as $key => $name) {
-      db_merge('registry')
+      $q = db_merge('registry')
         ->key(array(
           'name' => $name,
           'type' => $matches[1][$key],
@@ -175,10 +175,20 @@ function _registry_parse_file($filename, $contents, $module = '', $weight = 0) {
           'filename' => $filename,
           'module' => $module,
           'weight' => $weight,
-        ))
-        ->execute();
-    }
-    // Delete any resources for this file where the name is not in the list
+        ));
+//      dd($q->__toString());
+//      dd($q);
+//      dd("============");
+            if ($q) {
+                try {
+                    $q->execute();
+                } catch (Exception $e) {
+                    dd($e);
+                    dd("========================");
+                }
+            }
+        }
+        // Delete any resources for this file where the name is not in the list
     // we just merged in.
     db_delete('registry')
       ->condition('filename', $filename)

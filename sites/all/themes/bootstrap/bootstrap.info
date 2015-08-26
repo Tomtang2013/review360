@@ -132,6 +132,7 @@ exclude[css][] = 'modules/user/user.css'
 ;exclude[css][] = 'modules/system/system.admin.css'
 ;exclude[css][] = 'modules/system/system.base.css'
 
+stylesheets[all][] = css/bootstrap.min.css
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; SimplyTest.me

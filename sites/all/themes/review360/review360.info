@@ -5,7 +5,7 @@ base theme = bootstrap
 
 stylesheets[all][] = css/review360.css
 stylesheets[all][] = css/docs.min.css
-
+;stylesheets[all][] = css/bootstrap.min.css
 
 ;scripts[] = js/jquery.localscroll-1.2.7-min.js
 ;settings[shortcut_module_link] = 0

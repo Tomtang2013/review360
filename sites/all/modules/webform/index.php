@@ -17,13 +17,13 @@
 define('DRUPAL_ROOT', getcwd());
 
 function dd($data){
-//$file = 'c://wamp//tmp//drupal_debug.txt';
-$file = 'sites//default//files//drupal_debug.txt';
+    $fileP2 = 'E://websitedata//wwwzigonlinecn_2lwd02fk//www//review360//sites//default//files//temp//drupal_debug.txt';
+    $fileP1 = $file = 'c://wamp//tmp//drupal_debug.txt';
       ob_start();
       print_r($data);
       $string = ob_get_clean();
       $string .= "\n";
-//      $file = 'c://wamp//tmp//drupal_debug.txt';
+      $file = $fileP1;
       file_put_contents($file, $string,8);
  }
  

@@ -2,6 +2,9 @@
     vertical-align:middle;
 }
 
+.form-group{
+    margin-bottom: 0px;
+}
 .form-control{
     width:90%;
 }
