@@ -4,9 +4,9 @@
     
     $exam = get_exam_by_id($exam_id);
     
-    $exam_export_url = $base_url .'/export_exam_file/';
-    $exam_upload_url = $base_url .'/exammanagement/upload/';
-    $exam_edit_name_url = $base_url .'/exammanagement/changename/';
+    $exam_export_url = $base_url .'/?q=export_exam_file/';
+    $exam_upload_url = $base_url .'/?q=exammanagement/upload/';
+    $exam_edit_name_url = $base_url .'/?q=exammanagement/changename/';
 ?>
 <input id="exam_export_url" type="hidden" value="<?php print $exam_export_url.$exam->exam_id;?>"/>
 <input id="exam_upload_url" type="hidden" value="<?php print $exam_upload_url;?>"/>

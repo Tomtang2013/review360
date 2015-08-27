@@ -2,14 +2,14 @@
 drupal_add_js(drupal_get_path('module','review360_base').'/js/admin/review360_user_group.js');
 //drupal_add_js(drupal_get_path('module','review360_base').'/js/admin/review360_management.js');
 global $base_url;
-$add_new_group_url = $base_url .'/usermanagement/add';
-$group_list_url = $base_url .'/usermanagement/grouplist';
+$add_new_group_url = $base_url .'/?q=usermanagement/add';
+$group_list_url = $base_url .'/?q=usermanagement/grouplist';
 
 $groups = get_user_group_list();
 
-$user_upload_page = $base_url.'/review360_user_upload/';
-$user_group_edit_url = $base_url .'/usermanagement/group/edit/';
-$user_group_del_url = $base_url .'/usermanagement/group/del/';
+$user_upload_page = $base_url.'/?q=review360_user_upload/';
+$user_group_edit_url = $base_url .'?q=/usermanagement/group/edit/';
+$user_group_del_url = $base_url .'/?q=usermanagement/group/del/';
 //    
 ?>
 

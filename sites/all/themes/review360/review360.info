@@ -9,3 +9,4 @@ stylesheets[all][] = css/docs.min.css
 
 ;scripts[] = js/jquery.localscroll-1.2.7-min.js
 ;settings[shortcut_module_link] = 0
+scripts[] = js/bootstrap.js

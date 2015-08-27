@@ -3,10 +3,10 @@
     
     $exams = get_exam_list();
     global $base_url;
-    $add_new_exam_url = $base_url .'/exammanagement/add';
-    $exam_edit_url  = $base_url .'/exammanagement/edit/';
-    $exam_del_url  = $base_url .'/exammanagement/del';
-    $exam_list_url  = $base_url .'/exammanagement/examlist';
+    $add_new_exam_url = $base_url .'/?q=exammanagement/add';
+    $exam_edit_url  = $base_url .'/?q=exammanagement/edit/';
+    $exam_del_url  = $base_url .'/?q=exammanagement/del';
+    $exam_list_url  = $base_url .'/?q=exammanagement/examlist';
 ?>
 <input id="add_new_exam_url" type="hidden" value="<?php print $add_new_exam_url;?>"/>
 <input id="exam_edit_url" type="hidden" value="<?php print $exam_edit_url;?>"/>

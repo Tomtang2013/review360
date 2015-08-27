@@ -114,7 +114,7 @@ function review360_survey_edit_form($form_state, $args) {
         '#prefix' => '<div class="col-md-12 form-line">
             <div class="input-group col-md-6">
             <span class="input-group-addon" id="sizing-addon1">调查名称</span>',
-        '#suffix' => '</div>',
+        '#suffix' => '</div></div>',
         '#default_value' => $survey->survey_name,
         '#attributes' => array(
             'class' => array(
@@ -125,25 +125,25 @@ function review360_survey_edit_form($form_state, $args) {
     
     
     $form['survey_id'] = array('#type' => 'hidden', '#default_value' => $survey->survey_id);
-    
-    $form['survey_key'] = array(
-        '#type' => 'textfield',
-        '#prefix' => '
-            <div class="input-group col-md-6">
-            <span class="input-group-addon" id="sizing-addon1">识别代码</span>',
-        '#suffix' => '</div></div>',
-        '#default_value' => $survey->survey_key,
-         '#attributes' => array(
-            'class' => array(
-                'form-control',
-            ),
-            'data-toggle' =>'tooltip',
-            'data-placement'=>'bottom',
-            'placeholder'=>'识别代码',
-            'title'=>'调查代码，建议使用拼音缩写，不能重复。'
-        ),
-        
-    );
+    $form['survey_key'] = array('#type' => 'hidden', '#default_value' => $survey->survey_key);
+//    $form['survey_key'] = array(
+//        '#type' => 'textfield',
+//        '#prefix' => '
+//            <div class="input-group col-md-6">
+//            <span class="input-group-addon" id="sizing-addon1">识别代码</span>',
+//        '#suffix' => '</div></div>',
+//        '#default_value' => $survey->survey_key,
+//         '#attributes' => array(
+//            'class' => array(
+//                'form-control',
+//            ),
+//            'data-toggle' =>'tooltip',
+//            'data-placement'=>'bottom',
+//            'placeholder'=>'识别代码',
+//            'title'=>'调查代码，建议使用拼音缩写，不能重复。'
+//        ),
+//        
+//    );
     
     $form['survey_user_num'] = array(
         '#type' => 'textfield',
@@ -241,12 +241,12 @@ function review360_survey_edit_form($form_state, $args) {
        '#type' => 'textfield',
        '#multiple' => TRUE,
        '#prefix' => '<div class="col-md-12 form-line">
-            <div class="input-group col-md-6">
-            <span class="input-group-addon" id="sizing-addon1">问卷名称</span>',
+            <div class="input-group col-md-12">
+            <span class="input-group-addon" id="sizing-addon1">选择测验</span>',
        '#suffix' => '
                 <span class="input-group-addon"><span class="exam_remove_btn btn-icon glyphicon glyphicon-remove"></span></span>
                 <span class="input-group-addon"><span class=" btn-icon glyphicon glyphicon-th-list"></span></span>
-                </div>',
+                </div></div>',
        '#default_value' => $survey->survey_nid_name,
        '#attributes' => array(
             'class' => array(
@@ -261,14 +261,15 @@ function review360_survey_edit_form($form_state, $args) {
 //        '#default_values' => 14,
     );
     
+//    $form['survey_exams_nid'] = array('#type' => 'hidden', '#default_value' => $survey->survey_nids);
      $form['survey_exams_nid'] = array(
        '#type' => 'textfield',
         '#prefix' => '
-            <div class="input-group col-md-6">
+            <div class="input-group col-md-6" style="display:none;">
             <span class="input-group-addon" id="sizing-addon1">问卷编号</span>',
         '#suffix' => '<span class="input-group-addon">'
                     . '<span class="exam_remove_btn btn-icon glyphicon glyphicon-remove"></span></span>'
-                    . '</div></div>',
+                    . '</div>',
          '#default_value' => $survey->survey_nids,
          '#attributes' => array(
             'class' => array(
@@ -370,6 +371,8 @@ function review360_survey_edit_form($form_state, $args) {
             . '<span class="input-group-btn">',
           
         ); 
+       
+      
         if($survey->is_generate_report == 0){
             $form['submit_generate_report'] = array(
                 '#type' => 'submit',
@@ -430,9 +433,9 @@ function review360_survey_edit_form($form_state, $args) {
 }
 
 function get_selectable_exam(){
-    $query = "select re.*,count(wc.cid) number from
+    $query = "select re.*,ceil(count(wc.cid)/2) number from
             review360_exam re inner join 
-            webform_component wc on re.nid = wc.nid
+            webform_component wc on re.nid = wc.nid and type = 'select'
             group by re.nid";
     $result = db_query($query)->fetchAll();
     
@@ -549,58 +552,52 @@ function store_draft_update($survey){
     drupal_set_message(t("调查更新成功。"));
 }
 
+function loadTempNode($s_id){
+    $query = "select e_id as exam_id from review360_survey_exam where s_id = $s_id;";
+    $nids = db_query($query)->fetchAll();
+    $nodes = array();
+    foreach($nids as $nid){
+        $nodes[] = node_load($nid->exam_id);
+    }
+   
+    return $nodes;
+}
+
 function genrate_user_exam($s_id){
-    global $base_url;
     $survey = get_survey_by_id($s_id);
-    $old_node = node_load($survey->nid);
+//    $old_node = node_load($survey->nid);
+    $nodes = loadTempNode($s_id);
     $users = get_survey_user_exam_list($s_id);
-//    $counter = 0;
-//    foreach($users as $user){
-//        $node = null;
-//        $exam_name = $survey->survey_name.'_'.$user->su_id;
-//        $node = prepare_node_main($exam_name);
-//        $node->webform = array();
-//        
-//        $node->webform['components'] = $old_node->webform['components'];
-//        
-//        $node->webform['allow_draft'] = 1;
-//        $node->webform['redirect_url'] = 'interviewer/survey/submitted/'.$user->survey_user_key;
-////        $node->path = array('alias' => $user->survey_user_key);
-//        node_object_prepare($node);
-//        $node = node_submit($node);
-//        node_save($node);
-//        if($node->nid > 0){
-//            update_survey_user_nid($user->su_id,$node->nid);
-//            $counter++;
-//        }
-//    }
-    
     $function = 'genrate_user_exam_batch';
-    $batch = $function($users,$survey,$old_node);
+    $batch = $function($users,$survey,$nodes);
 //          
     batch_set($batch);
 }
 
-function genrate_user_exam_do_batch($user,$survey,$old_node, &$context){
-    $exam_name = $survey->survey_name . '_' . $user->su_id;
-    $node = prepare_node_main($exam_name);
-    $node->webform = array();
+function genrate_user_exam_do_batch($user,$survey,$nodes, &$context){
+    
+    foreach($nodes as $tmp_node){
+        $exam_name = $survey->survey_name . '_' . $user->su_id;
+        
+        $node = prepare_node_main($exam_name);
+        $node->webform = array();
 
-    $node->webform['components'] = $old_node->webform['components'];
+        $node->webform['components'] = $tmp_node->webform['components'];
 
-    $node->webform['allow_draft'] = 1;
-    $node->webform['redirect_url'] = 'interviewer/survey/submitted/' . $user->survey_user_key;
-//        $node->path = array('alias' => $user->survey_user_key);
-    node_object_prepare($node);
-    $node = node_submit($node);
-    node_save($node);
-    if ($node->nid > 0) {
-        update_survey_user_nid($user->su_id, $node->nid);
+        $node->webform['allow_draft'] = 1;
+        $node->webform['redirect_url'] = 'interviewer/survey/submitted/' . $user->survey_user_key;
+    //        $node->path = array('alias' => $user->survey_user_key);
+        node_object_prepare($node);
+        $node = node_submit($node);
+        node_save($node);
+        if ($node->nid > 0) {
+            update_survey_user_nid($user->su_id, $node->nid);
+        }
+        $context['results'][] = $node->nid;
     }
-    $context['results'][] = $node->nid;
 }
 
-function genrate_user_exam_batch($users,$survey,$old_node){
+function genrate_user_exam_batch($users,$survey,$nodes){
     
   $operations = array();
 
@@ -610,7 +607,7 @@ function genrate_user_exam_batch($users,$survey,$old_node){
         array(
           $user,
           $survey,
-          $old_node
+          $nodes
         ),
       );
   }
@@ -620,7 +617,7 @@ function genrate_user_exam_batch($users,$survey,$old_node){
         'finished' => 'genrate_user_exam_finish',
         'title' => t('问卷生成'),
         'init_message' => t('生成中....'),
-        'progress_message' => t('已经生成 @current 总共 @total.'),
+        'progress_message' => t('已经生成 @current 人, 总共 @total 人.'),
         'error_message' => t('生成错误请联系管理员.'),
         'file' => drupal_get_path('module', 'review360_base') . '/inc/admin/review360_survey_management.inc',
     );
@@ -655,10 +652,11 @@ function update_survey_user_nid($su_id,$nid){
 }
 
 function active_survey_by_id($id,$exam_nids,$survey_key){
-     $nid = create_survey_exam_template($exam_nids,$survey_key);
-     $rst = db_update('review360_survey')
+     //$nid = create_survey_exam_template($exam_nids,$survey_key);
+    relate_survey_exam($id,$exam_nids);
+    $rst = db_update('review360_survey')
         ->fields(array(
-              'nid' =>$nid,
+            //  'nid' =>$nid,
               'survey_status' => 1,
               'update_date' => time(),
           ))
@@ -668,30 +666,41 @@ function active_survey_by_id($id,$exam_nids,$survey_key){
      return false;
 }
 
-
-function create_survey_exam_template($exam_nids,$survey_key){
+function relate_survey_exam($sid,$exam_nids){
     $ids = explode(',',$exam_nids);
-    $exam_name = $survey_key.'_exam_template';
-//    $items = split('\n',$items_str);
-    $node = prepare_node_main($exam_name);
-    $tmp_node = null;
-    $components = null;
-    $node_component = array();
-    $cid = 1;
     foreach($ids as $id){
-        $tmp_node = node_load($id);
-        $components = $tmp_node->webform['components'];
-        foreach($components as $component){
-            $node_component[] = prepare_survey_exam_template_component($component,$survey_key,$cid);
-            $cid++;
-        }
+        $field_array = array();
+        $field_array['s_id'] = $sid;
+        $field_array['e_id'] = $id;
+        $field_array['create_date'] = time();
+        db_insert('review360_survey_exam')->fields($field_array)->execute();
     }
-    $node->webform['components'] = $node_component;
-    node_object_prepare($node);
-    $node = node_submit($node);
-    node_save($node);
-    return $node->nid;
 }
+
+//
+//function create_survey_exam_template($exam_nids,$survey_key){
+//    $ids = explode(',',$exam_nids);
+//    $exam_name = $survey_key.'_exam_template';
+////    $items = split('\n',$items_str);
+//    $node = prepare_node_main($exam_name);
+//    $tmp_node = null;
+//    $components = null;
+//    $node_component = array();
+//    $cid = 1;
+//    foreach($ids as $id){
+//        $tmp_node = node_load($id);
+//        $components = $tmp_node->webform['components'];
+//        foreach($components as $component){
+//            $node_component[] = prepare_survey_exam_template_component($component,$survey_key,$cid);
+//            $cid++;
+//        }
+//    }
+//    $node->webform['components'] = $node_component;
+//    node_object_prepare($node);
+//    $node = node_submit($node);
+//    node_save($node);
+//    return $node->nid;
+//}
 
 function prepare_survey_exam_template_component($old_component,$survey_key,$cid){
     $component = array();

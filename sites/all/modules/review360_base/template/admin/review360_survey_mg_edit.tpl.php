@@ -4,9 +4,9 @@ drupal_add_js(drupal_get_path('module', 'review360_base') . '/js/lib/locales/boo
 drupal_add_js(drupal_get_path('module', 'review360_base') . '/js/admin/review360_survey_edit.js');
 global $base_url;
 $survey = get_survey_by_id($survey_id);
-$survey_edit_submit_url = $base_url . '/surveymanagement/submit/';
-$survey_file_export_url = $base_url . '/surveymanagement/export/';
-$survey_report_export_url = $base_url . '/surveymanagement/report_export/';
+$survey_edit_submit_url = $base_url . '/?q=surveymanagement/submit/';
+$survey_file_export_url = $base_url . '/?q=surveymanagement/export/';
+$survey_report_export_url = $base_url . '/?q=surveymanagement/report_export/';
 
 
 $exams = get_selectable_exam();

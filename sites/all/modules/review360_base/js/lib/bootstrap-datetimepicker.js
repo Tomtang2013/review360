@@ -497,14 +497,17 @@
 			if (this.pickerPosition == 'top-left' || this.pickerPosition == 'top-right') {
 				top = offset.top - this.picker.outerHeight();
 			} else {
-				top = offset.top + this.height;
+                                if(this.height)
+                                    top = offset.top + this.height;
+                                else
+                                    top = offset.top + 40;
 			}
 
 			top = top - containerOffset.top;
 			left = left - containerOffset.left;
 
 			if(this.container != 'body') top = top + document.body.scrollTop
-
+//                        top = 379;
 			this.picker.css({
 				top:    top,
 				left:   left,

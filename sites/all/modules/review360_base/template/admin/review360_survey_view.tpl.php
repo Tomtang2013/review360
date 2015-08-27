@@ -3,10 +3,10 @@
     
     $surveys = get_survey_list();
     global $base_url;
-    $add_new_survey_url = $base_url .'/surveymanagement/add';
-    $survey_edit_url  = $base_url .'/surveymanagement/edit/';
-    $survey_del_url  = $base_url .'/surveymanagement/del';
-    $survey_list_url  = $base_url .'/surveymanagement/surveylist';
+    $add_new_survey_url = $base_url .'/?q=surveymanagement/add';
+    $survey_edit_url  = $base_url .'/?q=surveymanagement/edit/';
+    $survey_del_url  = $base_url .'/?q=surveymanagement/del';
+    $survey_list_url  = $base_url .'/?q=surveymanagement/surveylist';
 ?>
 <input id="add_new_survey_url" type="hidden" value="<?php print $add_new_survey_url;?>"/>
 <input id="survey_edit_url" type="hidden" value="<?php print $survey_edit_url;?>"/>

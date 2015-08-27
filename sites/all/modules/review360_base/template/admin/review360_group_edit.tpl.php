@@ -4,9 +4,9 @@
     
     $group = get_group_by_id($group_id);
     
-    $group_upload_url = $base_url .'/usermanagement/upload/';
-    $group_edit_name_url = $base_url .'/usermanagement/group/changename/';
-    $group_export_url = $base_url .'/export_user_file/';
+    $group_upload_url = $base_url .'/?q=usermanagement/upload/';
+    $group_edit_name_url = $base_url .'/?q=usermanagement/group/changename/';
+    $group_export_url = $base_url .'/?q=export_user_file/';
 ?>
 <input id="group_upload_url" type="hidden" value="<?php print $group_upload_url;?>"/>
 <input id="group_edit_name_url" type="hidden" value="<?php print $group_edit_name_url;?>"/>
