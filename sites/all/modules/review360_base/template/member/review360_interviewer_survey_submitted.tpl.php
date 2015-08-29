@@ -9,7 +9,16 @@ if(!isset($user) || empty($user)){
     drupal_goto($base_url.'/interviewer/onboard');
     return;
 } 
+if (!isset($nid) || empty($nid)) {
+    drupal_set_message(
+      t('请选择评测后开始答题。' )
+    );
+    drupal_goto($base_url . '/interviewer/exam/'.$user_key);
+    return;
+}
+
 $survey = get_survey_by_id($user->survey_id);
+
 ?>
 
 
@@ -22,16 +31,18 @@ $survey = get_survey_by_id($user->survey_id);
                     <div class="progress-bar " style="width: 20%;background-color:#69B4F4;">
                        识别代码登陆
                     </div>
-                    <div class="progress-bar" style="width: 30%;background-color:#4494D8;">
+                    <div class="progress-bar" style="width: 20%;background-color:#4494D8;">
                        受访者信息完善
                     </div>
-                    <div class="progress-bar progress-bar-striped" style="width: 40%;background-color:#2C7CC0;" >
-                       问卷填写
+                    <div class="progress-bar" style="width: 20%;background-color:#2C7CC0;">
+                       评测选择
                     </div>
-                    <div class="progress-bar progress-bar-striped" style="width: 10%;background-color:#125FA1;" >
-                       問卷提交
+                    <div class="progress-bar progress-bar-striped" style="width: 20%;background-color:#125FA1;" >
+                       评测填写
                     </div>
-                    
+                    <div class="progress-bar progress-bar-striped" style="width: 20%;background-color:#002521;" >
+                       评测提交
+                    </div>
                 </div>
             </div>
         </div>

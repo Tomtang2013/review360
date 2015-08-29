@@ -590,17 +590,18 @@ function genrate_user_exam_do_batch($user,$survey,$nodes, &$context){
         $node = node_submit($node);
         node_save($node);
         if ($node->nid > 0) {
-            insert_survey_user_exam($user->survey_id,$user->survey_user_key, $node->nid);
+            insert_survey_user_exam($user->survey_id,$user->survey_user_key, $node->nid,$tmp_node->title);
         }
         $context['results'][] = $node->nid;
     }
 }
 
-function insert_survey_user_exam($sid,$user_key,$exam_nid){
+function insert_survey_user_exam($sid,$user_key,$exam_nid,$exam_name){
     $field_array = array();
     $field_array['s_id'] = $sid;
     $field_array['exam_nid'] = $exam_nid;
     $field_array['user_key'] = $user_key;
+    $field_array['nick_name'] = $exam_name;
     $field_array['create_date'] = time();
     db_insert('review360_survey_user_exam')->fields($field_array)->execute();
 }

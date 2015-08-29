@@ -362,7 +362,7 @@ function review_interviewer_infor_form($form_state, $args) {
     
     $form['submit'] = array(
         '#type' => 'submit',
-        '#default_value' => '提交并开始答题',
+        '#default_value' => '提交',
         '#prefix' => '<div class="col-md-12 form-line">'
         . '<div class="btn-group col-md-4 pull-right" role="group" aria-label="" >'
         . '<span class="input-group-btn">',
@@ -431,7 +431,7 @@ function review_interviewer_infor_form_validate($form, &$form_state) {
 function review_interviewer_infor_form_submit($form, &$form_state) {
     $infor = $form_state['values'];
     update_infor_by_key($infor);
-    drupal_goto('interviewer/survey/'.$form_state['values']['infor_key']);
+    drupal_goto('interviewer/exam/'.$form_state['values']['infor_key']);
 }
 
 function update_infor_by_key($infor){
@@ -457,5 +457,5 @@ function update_infor_by_key($infor){
 			
             $q->execute();
 
-    drupal_set_message(t("个人信息保存成功，请开始答题。"));
+    drupal_set_message(t("个人信息保存成功，请选择评测。"));
 }

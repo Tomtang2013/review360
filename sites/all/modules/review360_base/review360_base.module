@@ -303,12 +303,12 @@ function review360_base_menu() {
         'weight'            => -47,
     );
      
-    $items['interviewer/survey/%'] = array(
+    $items['interviewer/survey/%/%'] = array(
         'title' => t('受访者信息管理'),
         'page callback'     => 'review360_interviewer_survey',
         'access arguments'  => array('review360_base_interviewer'),
         'file'              => 'inc/member/review360_interviewer_survey.inc',
-        'page arguments' => array(2),
+        'page arguments' => array(2,3),
         'weight'            => -47,
     );
     
@@ -402,7 +402,7 @@ function review360_base_theme() {
         
         'review360_interviewer_survey_view' => array(
             'template' => 'template/member/review360_interviewer_survey_view',
-            'variables' => array('user_key' => NULL),
+            'variables' => array('user_key' => NULL,'nid' => NULL),
         ),
         'review360_interviewer_survey_submitted' => array(
             'template' => 'template/member/review360_interviewer_survey_submitted',
@@ -415,6 +415,7 @@ function review360_base_theme() {
         
     );
 }
+
 
 function rend_block_by_name($model_name, $block_name) {
     $block = block_load($model_name, $block_name);
@@ -487,9 +488,8 @@ function get_exam_by_key($key){
     return $result;
 }
 
-
 function get_user_exam_by_key($key){
-    $query = "select exam_nid nid,status  from review360_survey_user_exam
+    $query = "select exam_nid nid,status,nick_name  from review360_survey_user_exam
             where user_key = '$key'";
     $result = db_query($query)->fetchAll();
     return $result;

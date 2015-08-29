@@ -178,3 +178,7 @@ input.error{
 #dropbox .preview.done .progress{
 	width:100% !important;
 }
+
+.table tr td{
+    border-bottom:1px solid #ddd;
+}
