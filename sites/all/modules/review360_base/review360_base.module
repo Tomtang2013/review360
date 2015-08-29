@@ -299,6 +299,7 @@ function review360_base_menu() {
         'page callback'     => 'review360_interviewer_exam',
         'access arguments'  => array('review360_base_interviewer'),
         'file'              => 'inc/member/review360_interviewer_exam.inc',
+        'page arguments' => array(2),
         'weight'            => -47,
     );
      
@@ -477,6 +478,21 @@ function prepare_form_stdClass($args){
 function prepare_default_value($val){
     if(isset($val)) return $val;
     return '';
+}
+
+function get_exam_by_key($key){
+    $query = "select exam_nid  from review360_survey_user_exam
+            where user_key = '$key'";
+    $result = db_query($query)->fetchAll();
+    return $result;
+}
+
+
+function get_user_exam_by_key($key){
+    $query = "select exam_nid nid,status  from review360_survey_user_exam
+            where user_key = '$key'";
+    $result = db_query($query)->fetchAll();
+    return $result;
 }
 
 function get_user_infor_by_key($key){

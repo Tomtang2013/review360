@@ -21,12 +21,12 @@ function bootstrap_css_alter(&$css) {
       $cdn = "";//'//netdna.bootstrapcdn.com/bootswatch/' . $bootstrap_cdn  . '/' . theme_get_setting('bootstrap_bootswatch') . '/bootstrap.min.css';
     }
     else {
-//      $cdn = "";//'//netdna.bootstrapcdn.com/bootstrap/' . $bootstrap_cdn  . '/css/bootstrap.min.css';
-      $cdn = '//netdna.bootstrapcdn.com/bootstrap/' . $bootstrap_cdn  . '/css/bootstrap.min.css';
+      $cdn = "";//'//netdna.bootstrapcdn.com/bootstrap/' . $bootstrap_cdn  . '/css/bootstrap.min.css';
+//      $cdn = '//netdna.bootstrapcdn.com/bootstrap/' . $bootstrap_cdn  . '/css/bootstrap.min.css';
     }
     $css[$cdn] = array(
-//      'data' => "",
-        'data' =>$cdn,
+      'data' => "",
+//        'data' =>$cdn,
       'type' => 'external',
       'every_page' => TRUE,
       'media' => 'all',

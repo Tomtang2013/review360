@@ -575,7 +575,6 @@ function genrate_user_exam($s_id){
 }
 
 function genrate_user_exam_do_batch($user,$survey,$nodes, &$context){
-    
     foreach($nodes as $tmp_node){
         $exam_name = $survey->survey_name . '_' . $user->su_id;
         
@@ -591,10 +590,19 @@ function genrate_user_exam_do_batch($user,$survey,$nodes, &$context){
         $node = node_submit($node);
         node_save($node);
         if ($node->nid > 0) {
-            update_survey_user_nid($user->su_id, $node->nid);
+            insert_survey_user_exam($user->survey_id,$user->survey_user_key, $node->nid);
         }
         $context['results'][] = $node->nid;
     }
+}
+
+function insert_survey_user_exam($sid,$user_key,$exam_nid){
+    $field_array = array();
+    $field_array['s_id'] = $sid;
+    $field_array['exam_nid'] = $exam_nid;
+    $field_array['user_key'] = $user_key;
+    $field_array['create_date'] = time();
+    db_insert('review360_survey_user_exam')->fields($field_array)->execute();
 }
 
 function genrate_user_exam_batch($users,$survey,$nodes){
@@ -641,15 +649,15 @@ function genrate_user_exam_finish($success, $results, $operations) {
   }
 }
 
-function update_survey_user_nid($su_id,$nid){
-    db_update('review360_survey_user')
-            ->fields(array(
-                  'nid' => $nid,
-                  'update_date' => time(),
-              ))
-            ->condition('su_id', $su_id)
-            ->execute();
-}
+//function update_survey_user_nid($su_id,$nid){
+//    db_update('review360_survey_user')
+//            ->fields(array(
+//                  'nid' => $nid,
+//                  'update_date' => time(),
+//              ))
+//            ->condition('su_id', $su_id)
+//            ->execute();
+//}
 
 function active_survey_by_id($id,$exam_nids,$survey_key){
      //$nid = create_survey_exam_template($exam_nids,$survey_key);
