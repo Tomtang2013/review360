@@ -298,7 +298,7 @@ function review_candidate_filter_form_submit($form, &$form_state) {
     variable_set('serach_query_str',$serach_query_str);
 }
 function generate_search_infor_by_condition_sql($infor){
-    $query = "select u_name,survey_name,u_company_name,survey_nid_name,u_p_number,u_email,rsu.nid
+    $query = "select rsu.survey_id, u_name,survey_name,u_company_name,survey_nid_name,u_p_number,u_email,rsu.nid
             from review360_survey_user rsu
             inner join review360_survey  rs on rsu.survey_id = rs.survey_id
             where u_name is not null ";
@@ -339,28 +339,46 @@ function search_infor_by_condition($query){
    return $result = db_query($query)->fetchAll();
 }
 function get_survey_rst_ajax(){
-    $nid = $_POST['nid'];
-    $rst = get_survey_rst_from_db($nid);
-    if ($rst) {
-        echo drupal_json_output(array('status' => 'success','rst'=>$rst));
-    } else {
-        $sv = load_survey_by_nid($nid);
-        generate_survey_result_by_sv($sv);
-        $rst = get_survey_rst_from_db($nid);
-        if ($rst) {
-            echo drupal_json_output(array('status' => 'success','rst'=>$rst));
-        } else{
-            echo drupal_json_output(array('status' => 'failed','rst'=>$rst));
+    $sid = $_POST['sid'];
+    $exams = load_survey_user_exam_by_nid($sid);
+    $result = new stdClass();
+    foreach($exams as $exam){
+        if($exam->is_submited == 1){
+            $exam_nid = $exam->exam_nid;
+            $result->$exam_nid = new stdClass();
+            $result->$exam_nid->nick_name = $exam->nick_name;
+            $result->$exam_nid->rst = array();
+        }     
+        if($exam->is_submited == 1 && $exam->is_generate_result == 0){
+             generate_survey_result_by_sv($exam);
+             dd("=-=========");
         }
+           
+    }
+
+    $survey_exams = get_survey_rst_from_db($sid);
+    foreach($survey_exams as $survey_exam){
+        $nid = $survey_exam->nid;
+        $result->$nid->rst[] =  $survey_exam;
+    }
+    if ($result) {
+        echo drupal_json_output(array('status' => 'success','rst'=>$result));
+    } else {
+        echo drupal_json_output(array('status' => 'failed','rst'=>$result));
     }
 }
 
-function get_survey_rst_from_db($nid){
-    $query = "select *  from review360_survey_result where nid = $nid";
+function perpare_exam_result($nick_name,$nid,$survey_exam){
+    
+}
+
+function get_survey_rst_from_db($sid){
+    $query = "select * from review360_survey_exam_result where sid=$sid";
     return db_query($query)->fetchAll();
 }
 
-function load_survey_by_nid($nid){
-    $query = "select * from review360_survey where nid = $nid";
-    return db_query($query)->fetchObject();
+function load_survey_user_exam_by_nid($sid){
+    $query = "select *  from review360_survey_user_exam rsue "
+            . "where s_id = $sid";
+    return db_query($query)->fetchAll();
 }

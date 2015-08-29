@@ -1,7 +1,4 @@
 <?php 
- //  drupal_add_js(drupal_get_path('module','review360_base').'/js/admin/review360_survey_view.js');
-    
-//    $user_infors = get_survey_list();
     global $base_url;
     $sql = variable_get('serach_query_str','');
     $users_infor = array();
@@ -28,28 +25,21 @@
         });
         jQuery('.btn-icon').click(function(){
             var url = '<?php print $rst_url;?>';
-            var nid = jQuery(this).attr('data-nid');
-            jQuery.post(url,{nid:nid},function(rsp){
+            var sid = jQuery(this).attr('data-sid');
+            jQuery.post(url,{sid:sid},function(rsp){
                 var value = rsp.rst;
+                console.log(value);
                 var tb = jQuery('#survey_rst_table_tb');
                 tb.empty();
-
-                tb.append(prepare_tr('D',value[0].d,
-                                value[1].d,
-                                value[2].d,
-                                value[3].d));
-                tb.append(prepare_tr('I',value[0].i,
-                                value[1].i,
-                                value[2].i,
-                                value[3].i));
-                tb.append(prepare_tr('S',value[0].s,
-                                value[1].s,
-                                value[2].s,
-                                value[3].s ));
-                tb.append(prepare_tr('C', value[0].c,
-                                value[1].c,
-                                value[2].c,
-                                value[3].c ));
+                var nick_name = null;
+                var rst = null;
+                for(var nid in value){
+                    nick_name = value[nid].nick_name;
+                    rst = value[nid].rst;
+                    appendTRNickName(tb,nick_name);
+                    appendTR(tb,rst)                    
+                }
+             
                 
                 jQuery('#rstViewBox').modal({
                     keyboard: true
@@ -57,6 +47,29 @@
             });
         });
      });   
+     function appendTRNickName(tb,name){
+        var tr = jQuery('<tr></tr>');
+        tr.append(jQuery('<td colspan="3">'+name+'</td>'));
+        return  tb.append(tr);
+     }
+     function appendTR(tb,value){
+           tb.append(prepare_tr('D',value[0].d,
+                            value[1].d,
+                            value[2].d,
+                            value[3].d));
+            tb.append(prepare_tr('I',value[0].i,
+                            value[1].i,
+                            value[2].i,
+                            value[3].i));
+            tb.append(prepare_tr('S',value[0].s,
+                            value[1].s,
+                            value[2].s,
+                            value[3].s ));
+            tb.append(prepare_tr('C', value[0].c,
+                            value[1].c,
+                            value[2].c,
+                            value[3].c ));
+     }
      
      function prepare_tr(type,v1,v2,v3,v4){
         var tr = jQuery('<tr></tr>');
@@ -105,7 +118,7 @@
                 <td class=""><?php print $user_infor->survey_nid_name;?></td>
                 <td class=""><?php print $user_infor->u_p_number;?></td>
                 <td class=""><?php print $user_infor->u_email?></td>
-                <td><span class=" btn-icon glyphicon glyphicon-th-list" data-nid="<?php print $user_infor->nid?>"></span></td>
+                <td><span class=" btn-icon glyphicon glyphicon-th-list" data-sid="<?php print $user_infor->survey_id?>"></span></td>
             </tr>
             <?php  endforeach;?>
         </tbody>

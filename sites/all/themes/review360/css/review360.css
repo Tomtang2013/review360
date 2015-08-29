@@ -182,3 +182,11 @@ input.error{
 .table tr td{
     border-bottom:1px solid #ddd;
 }
+
+.table tr td .form-radio{
+   width:80%;
+   height:80%;
+}
+.modal-dialog {
+    margin-top: 5%;
+}

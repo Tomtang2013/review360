@@ -26,7 +26,7 @@ if (!isset($nid) || empty($nid)) {
 }
 $survey = get_survey_by_id($user->survey_id);
 $node = node_load($nid);
-
+$exam = get_user_exam_by_nid($nid);
 ?>
 
 <script type="text/javascript">
@@ -153,7 +153,8 @@ $node = node_load($nid);
         </div>
         <div class="row">
             <div class="col-md-10 col-md-offset-1" >
-                <h1><?php print $survey->survey_name; ?> <small>欢迎 <?php print $user->u_name; ?> 参加本次调查!</small></h1>
+                <h1><?php print $survey->survey_name; ?></h1>
+                <h3><?php print $exam->nick_name;?> <small>欢迎 <?php print $user->u_name; ?> 参加本次调查!</small></h3>
             </div>
         </div>
     </div>

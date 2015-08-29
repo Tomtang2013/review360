@@ -488,8 +488,15 @@ function get_exam_by_key($key){
     return $result;
 }
 
+function get_user_exam_by_nid($nid){
+    $query = "select exam_nid nid,nick_name  from review360_survey_user_exam
+            where exam_nid = '$nid'";
+    $result = db_query($query)->fetchObject();
+    return $result;
+}
+
 function get_user_exam_by_key($key){
-    $query = "select exam_nid nid,status,nick_name  from review360_survey_user_exam
+    $query = "select exam_nid nid,nick_name  from review360_survey_user_exam
             where user_key = '$key'";
     $result = db_query($query)->fetchAll();
     return $result;
@@ -615,41 +622,28 @@ function bachelor_array(){
 
 
 function generate_survey_result(){
-    $query = "select *  from review360_survey_user";
-    $users = db_query($query)->fetchAll();
-    foreach($users as  $user){
-        generate_survey_result_by_sv($user);
+    $query = "select *  from review360_survey_user_exam rsue "
+            . "where is_submited = 1 and is_generate_result = 0 and is_generate_report = 0";
+    $exams = db_query($query)->fetchAll();
+    foreach($exams as  $exam){
+        generate_survey_result_by_sv($exam);
     }
 }
 
-function generate_survey_result_by_sv($user){
-    if(!$user->u_email) return;
-    //is_generate_result == 1 already generate result;
-    if($user->is_generate_result){
-        return;
-    }
-    // verify user is submit or not;
-    if(!$user->is_submit){
-        $user->is_submit = is_submit($user->nid,$user->su_id);
-    } 
-    // still not submit continue;
-    if(!$user->is_submit){
-        return;
-    }
+function generate_survey_result_by_sv($exam){
+    $result = get_survey_rst_by_nid($exam->exam_nid);
+    insert_user_survey_result($result->in_working_me,$exam->s_id,$exam->se_id,$exam->exam_nid,"in_working_me");
+    insert_user_survey_result($result->innate,$exam->s_id,$exam->se_id,$exam->exam_nid,"innate");
+    insert_user_survey_result($result->other,$exam->s_id,$exam->se_id,$exam->exam_nid,"other");
+    insert_user_survey_result($result->stress,$exam->s_id,$exam->se_id,$exam->exam_nid,"stress");
 
-    $result = get_survey_rst_by_nid($user->nid);
-    insert_user_survey_result($result->in_working_me,$user->survey_id,$user->su_id,$user->nid,"in_working_me");
-    insert_user_survey_result($result->innate,$user->survey_id,$user->su_id,$user->nid,"innate");
-    insert_user_survey_result($result->other,$user->survey_id,$user->su_id,$user->nid,"other");
-    insert_user_survey_result($result->stress,$user->survey_id,$user->su_id,$user->nid,"stress");
-
-    update_status_of_generate_report($user->su_id);
+    update_status_of_generate_report($exam->exam_nid);
 }
 
-function insert_user_survey_result($rst,$sid,$uid,$nid,$quadrant){
+function insert_user_survey_result($rst,$sid,$survey_exam_id,$nid,$quadrant){
     $field_array = array();
     $field_array['sid'] = $sid;
-    $field_array['su_id'] = $uid;
+    $field_array['se_id'] = $survey_exam_id;
     $field_array['nid'] = $nid;
     $field_array['quadrant'] = $quadrant;
     $field_array['d'] = $rst->d;
@@ -658,32 +652,32 @@ function insert_user_survey_result($rst,$sid,$uid,$nid,$quadrant){
     $field_array['c'] = $rst->c;
     $field_array['update_date'] = time();
     $field_array['create_date'] = time();
-    $rst = db_insert('review360_survey_result')->fields($field_array)->execute();
+    $rst = db_insert('review360_survey_exam_result')->fields($field_array)->execute();
 }
 
-function is_submit($nid,$su_id){
-    $query = "select count(nid) num from webform_submissions where nid = $nid";
-    $result = db_query($query)->fetchObject();
-    if($result->num >0) {
-        db_update('review360_survey_user')
-         ->fields(array(
-               'is_submit' => 1,
-               'update_date' => time(),
-           ))
-         ->condition('su_id', $su_id)
-         ->execute();
-        return 1;
-    }
-    return 0;
-}
+//function is_submit($nid,$su_id){
+//    $query = "select count(nid) num from webform_submissions where nid = $nid";
+//    $result = db_query($query)->fetchObject();
+//    if($result->num >0) {
+//        db_update('review360_survey_user')
+//         ->fields(array(
+//               'is_submit' => 1,
+//               'update_date' => time(),
+//           ))
+//         ->condition('su_id', $su_id)
+//         ->execute();
+//        return 1;
+//    }
+//    return 0;
+//}
 
-function update_status_of_generate_report($su_id){
-   return db_update('review360_survey_user')
+function update_status_of_generate_report($nid){
+   return db_update('review360_survey_user_exam')
          ->fields(array(
                'is_generate_result' => 1,
                'update_date' => time(),
            ))
-         ->condition('su_id', $su_id)
+         ->condition('exam_nid', $nid)
          ->execute();
 }
 
@@ -782,4 +776,22 @@ function generate_survey_rst($like,$dis_like){
     $rst->stress->c = $c->stress;
     
     return $rst;
+}
+
+ function is_submited($nid){
+    $query = "select count(sid)>0 from webform_submissions
+        where nid = $nid and is_draft =0 ";
+    $result = db_query($query)->fetchField();
+    return $result;
+}
+    
+function update_user_exam_status($nid){
+    return db_update('review360_survey_user_exam')
+         ->fields(array(
+               'is_submited' => 1,
+               'update_date' => time(),
+           ))
+         ->condition('exam_nid', $nid)
+         ->condition('is_submited', 0)
+         ->execute();
 }

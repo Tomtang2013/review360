@@ -14,13 +14,6 @@
                            
     $exam_nids = get_user_exam_by_key($user_key);
     
-    function is_submited($nid){
-         $query = "select count(sid)>0 from webform_submissions
-            where nid = $nid and is_draft !=0 ";
-        $result = db_query($query)->fetchField();
-        dd($result);
-        return $result;
-    }
 ?>
 <div class="row">
      <div class="page-header">
@@ -61,6 +54,10 @@
                 $exam = node_load($exam_nid->nid);
                 $url = $goto_url.$user_key."/$exam_nid->nid";
                 $is_submited = is_submited($exam_nid->nid);
+                dd($is_submited);
+                if($is_submited == 1){
+                    update_user_exam_status($exam_nid->nid);
+                }
             ?>
             <tr>
                 <td class="" style="line-height:60px;">

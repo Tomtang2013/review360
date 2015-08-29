@@ -43,9 +43,7 @@ function review360_survey_report_export($survey_id) {
 }
 
 function generate_survey_user_report_batch($users){
-    
   $operations = array();
-
   foreach($users as $user){
       $operations[] = array(
         'generate_survey_user_report_do_batch',
@@ -54,7 +52,7 @@ function generate_survey_user_report_batch($users){
         ),
       );
   }
-
+dd($operations);
     $batch = array(
         'operations' => $operations,
         'finished' => 'generate_survey_user_report_finish',
