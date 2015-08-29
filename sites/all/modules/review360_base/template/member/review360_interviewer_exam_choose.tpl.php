@@ -75,7 +75,7 @@
                              type="submit">已经完成</div>
                      <?php endif;?>
                 </td >
-                <td class=""  style="line-height:60px;border-bottom:1px solid #ddd"><?php print $exam_nid->nick_name; ?></td>
+                <td class=""  style="line-height:60px;"><?php print $exam_nid->nick_name; ?></td>
                 <td class=""  style="line-height:60px;"><?php print $is_submited == 0?"未答题":"已完成"?></td>
                 <td class=""  style="line-height:60px;">12分钟</td>
             </tr>
