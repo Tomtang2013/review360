@@ -13,7 +13,7 @@ class ReportCreator{
         $this->_outPutPath = $outPutPath;
 
     }	
-    public function generate_report($user){
+    public function generate_report($exam){
         require_once drupal_get_path('module', 'review360_base') . '/lib/PHPWord/PHPWord.php';
         require_once drupal_get_path('module', 'review360_base') . '/lib/ReportGenerator/ImageGenerator/ImageCreater.php';
         $PHPWord = new PHPWord();
@@ -57,9 +57,9 @@ class ReportCreator{
         $doc = str_replace('w:themeColor="background2"', '', $doc);
 
         $document->set_documentXML($doc);
-        $pix = $user->su_id;
+        $pix = $exam->s_id."_".$exam->nick_name;
 //        $pix = iconv('utf-8', 'gbk', $user->u_name) ;
-        $document->save($this->_outPutPath."/report".$pix.".docx");
+        $document->save($this->_outPutPath."/report_".$pix.".docx");
     }
 }
 ?>

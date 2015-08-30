@@ -26,10 +26,10 @@ function  review360_survey_export($survey_id){
 }
 
 function review_survey_report_generate($survey_id){
-    $query = "select *  from review360_survey_user where survey_id = $survey_id and is_generate_result = 1";
-    $users = db_query($query)->fetchAll();
+    $query = "select *  from review360_survey_user_exam where s_id = $survey_id and is_submited = 1";
+    $exams = db_query($query)->fetchAll();
     $function = 'generate_survey_user_report_batch';
-    $batch = $function($users);
+    $batch = $function($exams);
     batch_set($batch);
 }
 
@@ -42,17 +42,17 @@ function review360_survey_report_export($survey_id) {
     review360_base_export_zip_file($file_name, $get_url);
 }
 
-function generate_survey_user_report_batch($users){
+function generate_survey_user_report_batch($exams){
   $operations = array();
-  foreach($users as $user){
+  foreach($exams as $exam){
       $operations[] = array(
         'generate_survey_user_report_do_batch',
         array(
-          $user,
+          $exam,
         ),
       );
   }
-dd($operations);
+
     $batch = array(
         'operations' => $operations,
         'finished' => 'generate_survey_user_report_finish',
