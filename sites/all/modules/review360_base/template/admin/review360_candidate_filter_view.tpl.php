@@ -26,9 +26,9 @@
         jQuery('.btn-icon').click(function(){
             var url = '<?php print $rst_url;?>';
             var sid = jQuery(this).attr('data-sid');
-            jQuery.post(url,{sid:sid},function(rsp){
+            var uk = jQuery(this).attr('data-uk');
+            jQuery.post(url,{sid:sid,uk:uk},function(rsp){
                 var value = rsp.rst;
-                console.log(value);
                 var tb = jQuery('#survey_rst_table_tb');
                 tb.empty();
                 var nick_name = null;
@@ -110,7 +110,7 @@
             </tr>
         </thead>
         <tbody id="survey_table_tb">
-            <?php foreach($users_infor as $user_infor ): ?>
+            <?php foreach($users_infor as $user_infor ):?>
             <tr>
                 <td class=""><?php print $user_infor->u_name;?></td>
                 <td class=""><?php print $user_infor->survey_name;?></td>
@@ -118,7 +118,9 @@
                 <td class=""><?php print $user_infor->survey_nid_name;?></td>
                 <td class=""><?php print $user_infor->u_p_number;?></td>
                 <td class=""><?php print $user_infor->u_email?></td>
-                <td><span class=" btn-icon glyphicon glyphicon-th-list" data-sid="<?php print $user_infor->survey_id?>"></span></td>
+                <td><span class=" btn-icon glyphicon glyphicon-th-list"
+                          data-uk="<?php print $user_infor->survey_user_key?>"
+                          data-sid="<?php print $user_infor->survey_id?>"></span></td>
             </tr>
             <?php  endforeach;?>
         </tbody>

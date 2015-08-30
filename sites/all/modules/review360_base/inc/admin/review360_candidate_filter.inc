@@ -298,7 +298,7 @@ function review_candidate_filter_form_submit($form, &$form_state) {
     variable_set('serach_query_str',$serach_query_str);
 }
 function generate_search_infor_by_condition_sql($infor){
-    $query = "select rsu.survey_id, u_name,survey_name,u_company_name,survey_nid_name,u_p_number,u_email,rsu.nid
+    $query = "select rsu.survey_id,rsu.survey_user_key, u_name,survey_name,u_company_name,survey_nid_name,u_p_number,u_email,rsu.nid
             from review360_survey_user rsu
             inner join review360_survey  rs on rsu.survey_id = rs.survey_id
             where u_name is not null ";
@@ -340,7 +340,8 @@ function search_infor_by_condition($query){
 }
 function get_survey_rst_ajax(){
     $sid = $_POST['sid'];
-    $exams = load_survey_user_exam_by_nid($sid);
+    $user_key = $_POST['uk'];
+    $exams = load_survey_user_exam_by_nid($sid,$user_key);
     $result = new stdClass();
     foreach($exams as $exam){
         if($exam->is_submited == 1){
@@ -351,12 +352,12 @@ function get_survey_rst_ajax(){
         }     
         if($exam->is_submited == 1 && $exam->is_generate_result == 0){
              generate_survey_result_by_sv($exam);
-             dd("=-=========");
         }
            
     }
 
-    $survey_exams = get_survey_rst_from_db($sid);
+    $survey_exams = get_survey_rst_from_db($sid,$user_key);
+   
     foreach($survey_exams as $survey_exam){
         $nid = $survey_exam->nid;
         $result->$nid->rst[] =  $survey_exam;
@@ -368,17 +369,22 @@ function get_survey_rst_ajax(){
     }
 }
 
-function perpare_exam_result($nick_name,$nid,$survey_exam){
-    
-}
+//function perpare_exam_result($nick_name,$nid,$survey_exam){
+//    
+//}
 
-function get_survey_rst_from_db($sid){
-    $query = "select * from review360_survey_exam_result where sid=$sid";
+function get_survey_rst_from_db($sid,$user_key){
+    $query = "    select * from review360_survey_exam_result rser
+        inner join review360_survey_user_exam rsue 
+        on rser.sid = $sid and rser.sid = rsue.s_id
+        and rser.se_id = rsue.se_id
+        and rsue.user_key = '$user_key'";
     return db_query($query)->fetchAll();
 }
 
-function load_survey_user_exam_by_nid($sid){
+function load_survey_user_exam_by_nid($sid,$user_key){
     $query = "select *  from review360_survey_user_exam rsue "
-            . "where s_id = $sid";
+            . "where s_id = $sid and user_key = '$user_key'";
+ 
     return db_query($query)->fetchAll();
 }
