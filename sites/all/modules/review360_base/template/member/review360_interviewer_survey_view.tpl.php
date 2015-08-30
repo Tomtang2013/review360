@@ -83,6 +83,7 @@ $exam = get_user_exam_by_nid($nid);
 
         radioInit();
         appendPage();
+        click_td_select_radio();
         jQuery('#exam_box').show();
         jQuery('.form-radio').click(function () {
             radioInit();
@@ -125,6 +126,17 @@ $exam = get_user_exam_by_nid($nid);
         var td = jQuery('<td></td>');
         td.append(label);
         return td;
+    }
+    
+    function click_td_select_radio(){
+        jQuery('.exam_body').find('td').each(function(){
+            var radio = jQuery(this).find('radio');
+            if(radio){
+                jQuery(this).click(function(){
+                    radio.trigger('click');
+                });
+            }
+        });
     }
 
 </script> 
