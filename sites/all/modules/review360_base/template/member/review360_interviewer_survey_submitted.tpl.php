@@ -26,16 +26,16 @@ $survey = get_survey_by_id($user->survey_id);
                     <div class="progress-bar " style="width: 20%;background-color:#69B4F4;">
                        识别代码登陆
                     </div>
-                    <div class="progress-bar" style="width: 20%;background-color:#4494D8;">
-                       受访者信息完善
+                    <div class="progress-bar" style="width: 20%;background-color:#69B4F4;">
+                       填写个人信息
                     </div>
-                    <div class="progress-bar" style="width: 20%;background-color:#2C7CC0;">
-                       评测选择
+                    <div class="progress-bar" style="width: 20%;background-color:#69B4F4;">
+                       需完成测评列表
                     </div>
-                    <div class="progress-bar progress-bar-striped" style="width: 20%;background-color:#125FA1;" >
+                    <div class="progress-bar progress-bar-striped" style="width: 20%;background-color:#69B4F4;" >
                        评测填写
                     </div>
-                    <div class="progress-bar progress-bar-striped" style="width: 20%;background-color:#002521;" >
+                    <div class="progress-bar progress-bar-striped" style="width: 20%;background-color:#4494D8;" >
                        评测提交
                     </div>
                 </div>

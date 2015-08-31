@@ -39,7 +39,7 @@ $exam = get_user_exam_by_nid($nid);
         });
 
         jQuery('.webform-pager-page-slider').hide();
-        jQuery('.panel-title').html('请根据您的实际情况作出选择');
+        jQuery('.panel-title').html('选出一个最能贴切地描述你的短句，再选出一个最不适合来描述你的<strong>短句</strong>');
         jQuery('.webform-progressbar').hide();
         var radios = new Array();
         var radiosA = new Array();
@@ -148,13 +148,13 @@ $exam = get_user_exam_by_nid($nid);
                     <div class="progress-bar " style="width: 20%;background-color:#69B4F4;">
                         识别代码登陆
                     </div>
-                    <div class="progress-bar" style="width: 20%;background-color:#4494D8;">
-                        受访者信息完善
+                    <div class="progress-bar" style="width: 20%;background-color:#69B4F4;">
+                        填写个人信息
                     </div>
-                    <div class="progress-bar" style="width: 20%;background-color:#2C7CC0;">
-                        评测选择
+                    <div class="progress-bar" style="width: 20%;background-color:#69B4F4;">
+                        需完成测评列表
                     </div>
-                    <div class="progress-bar progress-bar-striped" style="width: 20%;background-color:#125FA1;" >
+                    <div class="progress-bar progress-bar-striped" style="width: 20%;background-color:#4494D8;" >
                         评测填写
                     </div>
                     <div class="progress-bar progress-bar-striped" style="width: 20%;background-color:#ffffff;" >
@@ -165,8 +165,7 @@ $exam = get_user_exam_by_nid($nid);
         </div>
         <div class="row">
             <div class="col-md-10 col-md-offset-1" >
-                <h1><?php print $survey->survey_name; ?></h1>
-                <h3><?php print $exam->nick_name;?> <small>欢迎 <?php print $user->u_name; ?> 参加本次调查!</small></h3>
+                <h3> <small>欢迎 <strong><?php print $user->u_name; ?></strong> 参加本次调查!</small></h3>
             </div>
         </div>
     </div>

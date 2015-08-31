@@ -303,6 +303,15 @@ function review360_base_menu() {
         'weight'            => -47,
     );
      
+      $items['interviewer/introduction/%/%'] = array(
+        'title' => t('受访者登陆'),
+        'page callback'     => 'review360_interviewer_introduction',
+        'access arguments'  => array('review360_base_interviewer'),
+        'file'              => 'inc/member/review360_interviewer_exam.inc',
+        'page arguments' => array(2,3),
+        'weight'            => -47,
+    );
+     
     $items['interviewer/survey/%/%'] = array(
         'title' => t('受访者信息管理'),
         'page callback'     => 'review360_interviewer_survey',
@@ -398,6 +407,10 @@ function review360_base_theme() {
         'review360_interviewer_exam_view' => array(
             'template' => 'template/member/review360_interviewer_exam_choose',
             'variables' => array('user_key' => NULL),
+        ),
+        'review360_interviewer_introduction_view' => array(
+           'template' => 'template/member/review360_interviewer_introduction',
+           'variables' => array('user_key' => NULL,'nid' => NULL),
         ),
         
         'review360_interviewer_survey_view' => array(
