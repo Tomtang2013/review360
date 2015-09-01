@@ -26,6 +26,7 @@ if (!isset($nid) || empty($nid)) {
 }
 $survey = get_survey_by_id($user->survey_id);
 $node = node_load($nid);
+  
 $exam = get_user_exam_by_nid($nid);
 ?>
 

@@ -54,10 +54,13 @@
                 $exam = node_load($exam_nid->nid);
                 $url = $goto_url.$user_key."/$exam_nid->nid";
                 $is_submited = is_submited($exam_nid->nid);
-             
-                if($is_submited == 1){
-                    update_user_exam_status($exam_nid->nid);
+                if($exam->webform['redirect_url'] == '<confirmation>'){
+                   $exam->webform['redirect_url'] ='interviewer/survey/submitted/' . $user->survey_user_key."/".$exam->nid;
+                   node_object_prepare($exam);
+                   node_submit($exam);
+                   node_save($exam);
                 }
+
             ?>
             <tr>
                 <td class="" style="line-height:60px;">

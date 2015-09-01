@@ -191,6 +191,14 @@ function review360_base_menu() {
         'weight'            => -47,
     );
     
+     $items['surveymanagement/report_excel_export/%'] = array(
+        'title' => t('问卷修改'),
+        'page callback'     => 'review360_survey_report_excel_export',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_survey_management.inc',
+        'page arguments' => array(2),
+        'weight'            => -47,
+    );
     
     // EXAM ===============================
     $items['exammanagement'] = array(
@@ -321,12 +329,21 @@ function review360_base_menu() {
         'weight'            => -47,
     );
     
-     $items['interviewer/survey/submitted/%'] = array(
+     $items['interviewer/survey/submitted/%/%'] = array(
         'title' => t('受访者信息管理'),
         'page callback'     => 'review360_interviewer_survey_submit',
         'access arguments'  => array('review360_base_interviewer'),
         'file'              => 'inc/member/review360_interviewer_survey.inc',
-        'page arguments' => array(3),
+        'page arguments' => array(3,4),
+        'weight'            => -47,
+    );
+     
+    $items['interviewer/survey/generate'] = array(
+        'title' => t('受访者信息管理'),
+        'page callback'     => 'review360_interviewer_survey_generate_ajax',
+        'access arguments'  => array('review360_base_interviewer'),
+        'file'              => 'inc/member/review360_interviewer_survey.inc',
+//        'page arguments' => array(3,4),
         'weight'            => -47,
     );
 
@@ -419,7 +436,7 @@ function review360_base_theme() {
         ),
         'review360_interviewer_survey_submitted' => array(
             'template' => 'template/member/review360_interviewer_survey_submitted',
-            'variables' => array('user_key' => NULL),
+            'variables' => array('user_key' => NULL,'nid' => NULL),
         ),
         'review360_interviewer_school' => array(
             'template' => 'template/member/review360_interviewer_school_view',
@@ -641,6 +658,93 @@ function generate_survey_result(){
     foreach($exams as  $exam){
         generate_survey_result_by_sv($exam);
     }
+}
+
+function generate_survey_result_by_id($sid){
+    $query = "select *  from review360_survey_user_exam rsue "
+            . "where is_submited = 1 and is_generate_result = 0 and is_generate_report = 0 and s_id=$sid";
+    $exams = db_query($query)->fetchAll();
+    foreach($exams as  $exam){
+        generate_survey_result_by_sv($exam);
+    }
+}
+
+function calculate_age($birthday){
+    $birth=prepare_timestamp_to_str($birthday);
+    list($by,$bm,$bd)=explode('-',$birth);
+    $cm=date('n');
+    $cd=date('j');
+    $age=date('Y')-$by-1;
+    if ($cm>$bm || $cm==$bm && $cd>$bd) $age++;
+    return $age;
+}
+
+function get_survey_result_by_sid( $exams,$sid){
+    $result = new stdClass();
+    foreach($exams as $exam){
+        if($exam->is_submited == 1){
+            $exam_nid = $exam->exam_nid;
+            $result->$exam_nid = new stdClass();
+            $result->$exam_nid->nick_name = $exam->nick_name;
+            $result->$exam_nid->rst = array();
+        }     
+    }
+
+    $survey_exams = get_survey_rst_from_db_by_sid($sid);
+   
+    foreach($survey_exams as $survey_exam){
+        $nid = $survey_exam->nid;
+        $result->$nid->rst[] =  $survey_exam;
+    }
+    return $result;
+}
+
+function get_survey_result( $exams,$sid,$user_key){
+    $result = new stdClass();
+    foreach($exams as $exam){
+        if($exam->is_submited == 1){
+            $exam_nid = $exam->exam_nid;
+            $result->$exam_nid = new stdClass();
+            $result->$exam_nid->nick_name = $exam->nick_name;
+            $result->$exam_nid->rst = array();
+        }     
+//        if($exam->is_submited == 1 && $exam->is_generate_result == 0){
+//             generate_survey_result_by_sv($exam);
+//        }
+    }
+
+    $survey_exams = get_survey_rst_from_db($sid,$user_key);
+   
+    foreach($survey_exams as $survey_exam){
+        $nid = $survey_exam->nid;
+        $result->$nid->rst[] =  $survey_exam;
+    }
+    return $result;
+}
+
+function get_survey_rst_from_db($sid,$user_key){
+    $query = "    select * from review360_survey_exam_result rser
+        inner join review360_survey_user_exam rsue 
+        on rser.sid = $sid and rser.sid = rsue.s_id
+        and rser.se_id = rsue.se_id
+        and rsue.user_key = '$user_key'";
+    return db_query($query)->fetchAll();
+}
+
+function get_survey_rst_from_db_by_sid($sid){
+    $query = "    select * from review360_survey_exam_result rser
+        inner join review360_survey_user_exam rsue 
+        on rser.sid = $sid and rser.sid = rsue.s_id
+        and rser.se_id = rsue.se_id";
+    return db_query($query)->fetchAll();
+}
+
+
+function load_survey_user_exam_by_sid_user_key($sid,$user_key){
+    $query = "select *  from review360_survey_user_exam rsue "
+            . "where s_id = $sid and user_key = '$user_key'";
+
+    return db_query($query)->fetchAll();
 }
 
 function generate_survey_result_by_sv($exam){

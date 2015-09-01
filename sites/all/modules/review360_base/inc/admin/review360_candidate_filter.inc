@@ -341,27 +341,8 @@ function search_infor_by_condition($query){
 function get_survey_rst_ajax(){
     $sid = $_POST['sid'];
     $user_key = $_POST['uk'];
-    $exams = load_survey_user_exam_by_nid($sid,$user_key);
-    $result = new stdClass();
-    foreach($exams as $exam){
-        if($exam->is_submited == 1){
-            $exam_nid = $exam->exam_nid;
-            $result->$exam_nid = new stdClass();
-            $result->$exam_nid->nick_name = $exam->nick_name;
-            $result->$exam_nid->rst = array();
-        }     
-        if($exam->is_submited == 1 && $exam->is_generate_result == 0){
-             generate_survey_result_by_sv($exam);
-        }
-           
-    }
-
-    $survey_exams = get_survey_rst_from_db($sid,$user_key);
-   
-    foreach($survey_exams as $survey_exam){
-        $nid = $survey_exam->nid;
-        $result->$nid->rst[] =  $survey_exam;
-    }
+    $exams = load_survey_user_exam_by_sid_user_key($sid,$user_key);
+    $result = get_survey_result($exams,$sid,$user_key);
     if ($result) {
         echo drupal_json_output(array('status' => 'success','rst'=>$result));
     } else {
@@ -373,18 +354,5 @@ function get_survey_rst_ajax(){
 //    
 //}
 
-function get_survey_rst_from_db($sid,$user_key){
-    $query = "    select * from review360_survey_exam_result rser
-        inner join review360_survey_user_exam rsue 
-        on rser.sid = $sid and rser.sid = rsue.s_id
-        and rser.se_id = rsue.se_id
-        and rsue.user_key = '$user_key'";
-    return db_query($query)->fetchAll();
-}
 
-function load_survey_user_exam_by_nid($sid,$user_key){
-    $query = "select *  from review360_survey_user_exam rsue "
-            . "where s_id = $sid and user_key = '$user_key'";
- 
-    return db_query($query)->fetchAll();
-}
+

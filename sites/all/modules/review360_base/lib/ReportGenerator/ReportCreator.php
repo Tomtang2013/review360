@@ -60,6 +60,7 @@ class ReportCreator{
         $pix = $exam->s_id."_".$exam->nick_name;
 //        $pix = iconv('utf-8', 'gbk', $user->u_name) ;
         $document->save($this->_outPutPath."/report_".$pix.".docx");
+        return $this->_outPutPath."/report_".$pix.".docx";
     }
 }
 ?>

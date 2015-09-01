@@ -11,12 +11,42 @@ if(!isset($user) || empty($user)){
     return;
 } 
 
-$back_url = $base_url.'/interviewer/exam/'.$user_key;
-$survey = get_survey_by_id($user->survey_id);
+if (!isset($nid) || empty($nid)) {
+    drupal_set_message(
+            t('请选择评测后开始答题。')
+    );
+    drupal_goto($base_url . '/interviewer/exam/' . $user_key);
 
+    return;
+}
+
+$back_url = $base_url.'/interviewer/exam/'.$user_key;
+$generate_url = $base_url."/interviewer/survey/generate";
+
+$query = "select count(nid)>0 as has_result from review360_survey_exam_result where nid=$nid";
+$has_result = db_query($query)->fetchObject();
+dd($has_result->has_result);
 ?>
 
-
+<input id="generate_url" type="hidden" value="<?php print $generate_url; ?>"/>
+<input id="user_key" type="hidden" value="<?php print $user_key; ?>"/>
+<input id="nid" type="hidden" value="<?php print $nid; ?>"/>
+<input id="has_result" type="hidden" value="<?php print $has_result->has_result; ?>"/>
+<script type="text/javascript">
+    jQuery(function () {
+       if(jQuery('#has_result').val()==0){
+           send_generate_post();
+       }
+    });
+    
+    function send_generate_post(){
+        var link = jQuery('#generate_url').val();
+        var data = {user_key:jQuery('#user_key').val()
+            ,nid:jQuery('#nid').val()};
+         jQuery.post(link,data,function(req){
+           console.log(req);
+        });
+    }
 </script> 
 <div class="survey-user-exam-main">
     <div class="page-header">
@@ -43,7 +73,7 @@ $survey = get_survey_by_id($user->survey_id);
         </div>
         <div class="row">
             <div class="col-md-10 col-md-offset-1" >
-                <h1><?php print $survey->survey_name; ?> <small>感谢 <?php print $user->u_name; ?> 参加本次调查!</small></h1>
+                <h1> <small>感谢 <?php print $user->u_name; ?> 参加本次调查!</small></h1>
             </div>
         </div>
     </div>
