@@ -42,6 +42,156 @@ function review360_survey_report_export($survey_id) {
     review360_base_export_zip_file($file_name, $get_url);
 }
 
+function review360_survey_report_excel_export($survey_id) {
+    $survey = get_survey_by_id($survey_id);
+    $fileName = $survey->survey_name.'_excel_report';
+    $date = date("Y_m_d", time());
+    $fileName .= "_{$date}.xls";
+    export_survey_excel_report($survey,$fileName);
+}
+
+function get_survey_user_information($survey_id){
+     $query = "select rs.survey_id,rs.survey_name,rsu.survey_user_key, 
+        rsu.u_email,rsu.u_name,rsu.u_sex,rsu.u_company_name,
+        rsu.u_p_number,rsu.u_birthday, rsue.exam_nid,
+        rsue.is_submited, rsue.nick_name,rsue.is_generate_result 
+        from  review360_survey  rs
+        inner join review360_survey_user rsu on rs.survey_id = rsu.survey_id
+        inner join review360_survey_user_exam rsue on rsue.s_id = rs.survey_id 
+        and rsu.survey_user_key = rsue.user_key
+        where rs.survey_id = $survey_id
+        ";
+    $result = db_query($query)->fetchAll();
+    return $result;
+}
+
+function get_survey_excel_result($survey){
+    $sid = $survey->survey_id;
+    $exams = get_survey_user_information($sid);
+    $results = get_survey_result_by_sid($exams,$sid);
+   
+    $export_rsts = array();
+   
+    foreach($results as $key=>$value){
+        $export_rst = new stdClass();
+        foreach($exams as $exam){
+            if($exam->exam_nid == $key){
+                $export_rst = $exam;
+            }
+        }
+        foreach($value->rst as $result){
+           switch_stdclass($result,$export_rst);
+        }    
+        $export_rst->nick_name = $value->nick_name;
+        $export_rst->exam_id = $key;
+        $export_rsts[] = $export_rst;
+    }
+    return $export_rsts;
+}
+
+function switch_stdclass($value,&$rst){
+     switch($value->quadrant){
+                case "in_working_me" :  return prepare_export_rst_working($value,$rst); 
+                case "innate"   :    return prepare_export_rst_innate($value,$rst); 
+                case "other"    :    return prepare_export_rst_other($value,$rst); 
+                case "stress"   :    return prepare_export_rst_stress($value,$rst); 
+            }
+}
+
+function prepare_export_rst_working($value, &$rst) {
+    $rst->working_d = $value->d;
+    $rst->working_i = $value->i;
+    $rst->working_s = $value->s;
+    $rst->working_c = $value->c;
+    return $rst;
+}
+
+function prepare_export_rst_innate($value, &$rst){
+    $rst->innate_d = $value->d;
+    $rst->innate_i = $value->i;
+    $rst->innate_s = $value->s;
+    $rst->innate_c = $value->c;
+    return $rst;
+}
+
+function prepare_export_rst_other($value, &$rst){
+    $rst->other_d = $value->d;
+    $rst->other_i = $value->i;
+    $rst->other_s = $value->s;
+    $rst->other_c = $value->c;
+    return $rst;
+}
+
+function prepare_export_rst_stress($value, &$rst){
+    $rst->stress_d = $value->d;
+    $rst->stress_i = $value->i;
+    $rst->stress_s = $value->s;
+    $rst->stress_c = $value->c;
+    return $rst;
+}
+
+function export_excel_result_filter($full_result){
+    $rst = array();
+    foreach($full_result as $r){
+        $new = new stdClass();
+        $new->name = $r->u_name;
+        $new->survey_user_key = $r->survey_user_key;
+        $new->u_sex = $r->u_sex;
+        $new->age = calculate_age($r->u_birthday);
+        $new->u_p_number = $r->u_p_number;
+        $new->u_email = $r->u_email;
+        $new->u_company_name = $r->u_company_name;
+        $new->working_d = $r->working_d;
+        $new->working_i = $r->working_i;
+        $new->working_s = $r->working_s;
+        $new->working_c = $r->working_c;
+        $new->innate_d = $r->innate_d;
+        $new->innate_i = $r->innate_i;
+        $new->innate_s = $r->innate_s;
+        $new->innate_c = $r->innate_c;
+        $new->other_d = $r->other_d;
+        $new->other_i = $r->other_i;
+        $new->other_s = $r->other_s;
+        $new->other_c = $r->other_c;
+        $new->stress_d = $r->stress_d;
+        $new->stress_i = $r->stress_i;
+        $new->stress_s = $r->stress_s;
+        $new->stress_c = $r->stress_c;
+        $rst[] = $new;
+    }
+    return $rst;
+}
+
+function export_survey_excel_report($survey,$fileName){
+    $temp = get_survey_excel_result($survey);
+    $results = export_excel_result_filter($temp);
+    $headArr = array( "姓名", "通行证","性别","年龄","电话","电子邮箱","公司","D","I","S","C","D","I","S","C","D","I","S","C","D","I","S","C");
+    $objPHPExcel = new PHPExcel();
+    $key = ord("A");
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue(chr(ord("H")) . '1', "工作角色中的我");
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue(chr(ord("L")) . '1', "天生的我");
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue(chr(ord("P")) . '1', "别人眼中的我");
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue(chr(ord("T")) . '1', "压力下的我");
+    foreach ($headArr as $v) {
+        $colum = chr($key);
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($colum . '2', $v);
+        $key += 1;
+    }
+    $column = 3;
+    $objActSheet = $objPHPExcel->getActiveSheet();
+    foreach ($results as $key => $rows) {
+        $span = ord("A");
+        foreach ($rows as $keyName => $value) {
+            $j = chr($span);
+            $objActSheet->setCellValue($j . $column, $value);
+            $span++;
+        }
+        $column++;
+    }
+    review360_base_export_file($fileName, $objPHPExcel);
+}
+
+
 function generate_survey_user_report_batch($exams){
   $operations = array();
   foreach($exams as $exam){
@@ -370,39 +520,6 @@ function review360_survey_edit_form($form_state, $args) {
           
         ); 
        
-      
-        if($survey->is_generate_report == 0){
-            $form['submit_generate_report'] = array(
-                '#type' => 'submit',
-                '#default_value' => '生成报告',
-                '#attributes' => array(
-                    'class' => array(
-                        'btn btn-primary',
-                    ),
-                    'data-loading-text'=>'准备导出...',
-                    'data-toggle' =>'tooltip',
-                    'data-placement'=>'bottom',
-                    'title'=>'只有已经完成的调查会生成报告。'
-                ),
-
-                '#suffix' => '</span></div></div>',
-            ); 
-        }else{
-             $form['submit_generate_report'] = array(
-                '#type' => 'submit',
-                '#default_value' => '生成报告',
-                '#attributes' => array(
-                    'class' => array(
-                        'btn btn-primary',
-                    ),
-                    'data-loading-text'=>'报告生成...',
-                    'data-toggle' =>'tooltip',
-                    'data-placement'=>'bottom',
-                    'title'=>'只有已经完成的调查会生成报告。'
-                ),
-
-                '#suffix' => '',
-            ); 
             $form['submit_export_report'] = array(
                 '#type' => 'button',
                 '#default_value' => '下载报告',
@@ -416,10 +533,23 @@ function review360_survey_edit_form($form_state, $args) {
                     'title'=>'只有已经完成的调查会被导出。'
                 ),
 
+                '#suffix' => '',
+            ); 
+            $form['submit_export_excel_report'] = array(
+                '#type' => 'button',
+                '#default_value' => '下载调查结果',
+                '#attributes' => array(
+                    'class' => array(
+                        'btn ',
+                    ),
+                    'data-loading-text'=>'准备导出...',
+                    'data-toggle' =>'tooltip',
+                    'data-placement'=>'bottom',
+                    'title'=>'下载调查结果，Excel格式。'
+                ),
+
                 '#suffix' => '</span></div></div>',
             ); 
-        }
-         
     }
     
       if($survey->survey_status == 2 ||
@@ -528,7 +658,11 @@ function review360_survey_edit_form_submit($form, &$form_state) {
 //        drupal_set_message(t("生成用户问卷 $counter 份。"));
     } else if('生成报告' === $form_state['values']['op'] ){
         review_survey_report_generate($survey['survey_id']);
-    }
+    } 
+}
+
+function prepare_survey_group_excel_result($survey){
+//    dd($survey);
 }
 
 function store_draft_update($survey){
@@ -551,7 +685,7 @@ function store_draft_update($survey){
 }
 
 function loadTempNode($s_id){
-    $query = "select e_id as exam_id from review360_survey_exam where s_id = $s_id;";
+    $query = "select e_id as exam_id from review360_survey_exam where s_id = $s_id group by e_id;";
     $nids = db_query($query)->fetchAll();
     $nodes = array();
     foreach($nids as $nid){
@@ -566,9 +700,9 @@ function genrate_user_exam($s_id){
 //    $old_node = node_load($survey->nid);
     $nodes = loadTempNode($s_id);
     $users = get_survey_user_exam_list($s_id);
+   
     $function = 'genrate_user_exam_batch';
     $batch = $function($users,$survey,$nodes);
-//          
     batch_set($batch);
 }
 
@@ -582,7 +716,7 @@ function genrate_user_exam_do_batch($user,$survey,$nodes, &$context){
         $node->webform['components'] = $tmp_node->webform['components'];
 
         $node->webform['allow_draft'] = 1;
-        $node->webform['redirect_url'] = 'interviewer/survey/submitted/' . $user->survey_user_key;
+    //    $node->webform['redirect_url'] = 'interviewer/survey/submitted/' . $user->survey_user_key;
     //        $node->path = array('alias' => $user->survey_user_key);
         node_object_prepare($node);
         $node = node_submit($node);

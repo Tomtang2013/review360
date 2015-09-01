@@ -12,6 +12,11 @@ jQuery(function () {
     });
     
 
+    jQuery('#edit-submit-export-excel-report').click(function () {
+        var link = jQuery('#survey_report_excel_export_url').val();
+        location.href = link;
+    });
+    
     jQuery('#edit-submit-export-report').click(function () {
         var link = jQuery('#survey_report_export_url').val();
         location.href = link;

@@ -190,3 +190,15 @@ input.error{
 .modal-dialog {
     margin-top: 5%;
 }
+
+.datetimepicker-months .month{
+    padding-right:5px;
+    width:25%;
+    display:inline-block;
+}
+
+.datetimepicker-years .year{
+    padding-right:5px;
+    width:25%;
+    display:inline-block;
+}

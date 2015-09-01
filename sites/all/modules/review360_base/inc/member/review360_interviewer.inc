@@ -210,12 +210,37 @@ function review_interviewer_infor_form($form_state, $args) {
         ),
     );
  
-    $form['infor_p_number'] = array(
+    $form['infor_u_birthday'] = array(
         '#type' => 'textfield',
         '#prefix' => '<div class="col-md-12 form-line">
+            <div class="input-group col-md-6">
+             <div class="input-group date form_date " data-date="2015-01-01" 
+             data-date-format="yyyy-mm-dd" data-link-field="dtp_start_date">
+             <span class="input-group-addon" id="sizing-addon1">出生年月</span>',
+        '#suffix' => '
+                <span class="input-group-addon"><span class="btn-icon glyphicon glyphicon-remove"></span></span>
+                <span class="input-group-addon"><span class="btn-icon glyphicon glyphicon-th"></span></span>
+                </div>
+                <input type="hidden" id="dtp_start_date" value="" /></div>',
+          '#default_value' => prepare_timestamp_to_str($user->u_birthday),
+        '#attributes' => array(
+            'class' => array(
+                'form-control',
+            ),
+            'readonly' =>'',
+            'data-toggle' =>'tooltip',
+            'data-placement'=>'bottom',
+            'placeholder'=>'出生年月',
+            'title'=>'出生年月。'
+        ),
+    );
+    
+    $form['infor_p_number'] = array(
+        '#type' => 'textfield',
+        '#prefix' => '
             <div class="input-group col-md-6 user-infor-item">
             <span class="input-group-addon" id="sizing-addon1">手机号码</span> ',
-        '#suffix' => '</div>',
+        '#suffix' => '</div></div>',
         '#default_value' => prepare_default_value($user->u_p_number),
         '#attributes' => array(
             'class' => array(
@@ -223,6 +248,26 @@ function review_interviewer_infor_form($form_state, $args) {
             ),
             'placeholder'=>'手机号码',
         ),
+    );
+    
+    
+    
+    
+
+     $form['infor_specialty'] = array(
+        '#type' => 'select',
+        '#prefix' => '<div class="col-md-12 form-line">
+            <div class="input-group col-md-6 user-infor-item">
+            <span class="input-group-addon" id="sizing-addon1">攻读专业</span> ',
+        '#suffix' => '</div>',
+        '#default_value' => prepare_default_value($user->u_specialty),
+        '#attributes' => array(
+            'class' => array(
+                'form-control',
+            ),
+            'placeholder'=>'您当攻读的专业类别',
+        ),
+        '#options' => specialty_array(),
     );
 
     $form['infor_bachelor'] = array(
@@ -239,22 +284,22 @@ function review_interviewer_infor_form($form_state, $args) {
             ),
             'placeholder'=>'您正在攻读或已获得的最高学位',
         ),
-    );
+    ); 
     
-     $form['infor_specialty'] = array(
+    $form['infor_experience'] = array(
         '#type' => 'select',
         '#prefix' => '<div class="col-md-12 form-line">
             <div class="input-group col-md-6 user-infor-item">
-            <span class="input-group-addon" id="sizing-addon1">攻读专业</span> ',
+            <span class="input-group-addon" id="sizing-addon1">工作经验</span> ',
         '#suffix' => '</div>',
-        '#default_value' => prepare_default_value($user->u_specialty),
+        '#default_value' => prepare_default_value($user->u_experience),
         '#attributes' => array(
             'class' => array(
                 'form-control',
             ),
-            'placeholder'=>'您当攻读的专业类别',
+            'placeholder'=>'从事该工作的工作年限',
         ),
-        '#options' => specialty_array(),
+        '#options' => experience_array(),
     );
 
     $form['infor_university'] = array(
@@ -278,20 +323,20 @@ function review_interviewer_infor_form($form_state, $args) {
         ),
     );
     
-    $form['infor_experience'] = array(
-        '#type' => 'select',
+    
+    $form['infor_company_name'] = array(
+        '#type' => 'textfield',
         '#prefix' => '<div class="col-md-12 form-line">
             <div class="input-group col-md-6 user-infor-item">
-            <span class="input-group-addon" id="sizing-addon1">工作经验</span> ',
+            <span class="input-group-addon" id="sizing-addon1">公司名称</span> ',
         '#suffix' => '</div>',
-        '#default_value' => prepare_default_value($user->u_experience),
+        '#default_value' => prepare_default_value($user->u_company_name),
         '#attributes' => array(
             'class' => array(
                 'form-control',
             ),
-            'placeholder'=>'从事该工作的工作年限',
+            'placeholder'=>'您当前所在公司名称',
         ),
-        '#options' => experience_array(),
     );
 
     $form['infor_engaged'] = array(
@@ -310,42 +355,13 @@ function review_interviewer_infor_form($form_state, $args) {
         ),
     );
     
-    $form['infor_company_name'] = array(
-        '#type' => 'textfield',
-        '#prefix' => '<div class="col-md-12 form-line">
-            <div class="input-group col-md-6 user-infor-item">
-            <span class="input-group-addon" id="sizing-addon1">公司名称</span> ',
-        '#suffix' => '</div>',
-        '#default_value' => prepare_default_value($user->u_company_name),
-        '#attributes' => array(
-            'class' => array(
-                'form-control',
-            ),
-            'placeholder'=>'您当前所在公司名称',
-        ),
-    );
-
-    $form['infor_department'] = array(
-        '#type' => 'textfield',
-        '#prefix' => '
-            <div class="input-group col-md-6 user-infor-item">
-            <span class="input-group-addon" id="sizing-addon1">部门名称</span> ',
-        '#suffix' => '</div></div>',
-        '#default_value' => prepare_default_value($user->u_department),
-        '#attributes' => array(
-            'class' => array(
-                'form-control',
-            ),
-             'placeholder'=>'您当前所在部门名称',
-        ),
-    );
     
     $form['infor_work_nature'] = array(
         '#type' => 'select',
         '#prefix' => '<div class="col-md-12 form-line">
             <div class="input-group col-md-6 user-infor-item">
             <span class="input-group-addon" id="sizing-addon1">从事行业</span> ',
-        '#suffix' => '</div></div>',
+        '#suffix' => '</div>',
         '#options' => array(
             0=>'-- 请选择 --',
             '管理'=>'管理',
@@ -360,6 +376,20 @@ function review_interviewer_infor_form($form_state, $args) {
         ),
     );
     
+    $form['infor_department'] = array(
+        '#type' => 'textfield',
+        '#prefix' => '
+            <div class="input-group col-md-6 user-infor-item">
+            <span class="input-group-addon" id="sizing-addon1">部门名称</span> ',
+        '#suffix' => '</div></div>',
+        '#default_value' => prepare_default_value($user->u_department),
+        '#attributes' => array(
+            'class' => array(
+                'form-control',
+            ),
+             'placeholder'=>'您当前所在部门名称',
+        ),
+    );
     $form['submit'] = array(
         '#type' => 'submit',
         '#default_value' => '提交',
@@ -441,6 +471,7 @@ function update_infor_by_key($infor){
                 'u_email' => $infor['infor_email'],
                 'u_name' => $infor['infor_name'],
                 'u_sex' => $infor['infor_sex'],
+                'u_birthday' => prepare_date_to_timestamp($infor['infor_u_birthday']),
                 'u_p_number' => $infor['infor_p_number'],
                 'u_bachelor' => $infor['infor_bachelor'],
                 'u_specialty' => $infor['infor_specialty'],

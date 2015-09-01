@@ -1,10 +1,25 @@
 <?php
+drupal_add_js(drupal_get_path('module', 'review360_base') . '/js/lib/bootstrap-datetimepicker.js');
+drupal_add_js(drupal_get_path('module', 'review360_base') . '/js/lib/locales/bootstrap-datetimepicker.zh-CN.js');
+
 global $base_url;
 $user = get_user_infor_by_key($user_key);
 ?>
 
 <script type="text/javascript">
     jQuery(function () {
+        jQuery('.form_date').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 0,
+            format: 'yyyy-mm-dd'
+        });
+    
         jQuery('.school-list-btn').click(function(){
             jQuery('#schoolBox').modal({
                     keyboard: true
@@ -26,10 +41,10 @@ $user = get_user_infor_by_key($user_key);
                        识别代码登陆
                     </div>
                     <div class="progress-bar" style="width: 20%;background-color:#4494D8;">
-                       受访者信息完善
+                       填写个人信息
                     </div>
                     <div class="progress-bar" style="width: 20%;background-color:#ffffff;">
-                       评测选择
+                       需完成测评列表
                     </div>
                     <div class="progress-bar progress-bar-striped" style="width: 20%;background-color:#ffffff;" >
                        评测填写

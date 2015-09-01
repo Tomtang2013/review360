@@ -1,4 +1,10 @@
 <?php
+
+defined('DEFAULT_WORDTEMPLATE') or define('DEFAULT_WORDTEMPLATE', 'sites/default/files/generateFiles/DiscTemp.docx');
+defined('DEFAULT_WORDPATH') or define('DEFAULT_WORDPATH', 'sites/default/files/generateFiles/');
+
+
+
 function review360_interviewer_survey($key,$nid){
     $action_name = theme('review360_interviewer_survey_view',array('user_key'=>$key,'nid'=>$nid));
     $pageContent = theme('right_content', array('page_content' => $action_name, 'is_html' => true));
@@ -11,8 +17,43 @@ function review360_interviewer_survey($key,$nid){
     return $pageContent;
 }
 
-function review360_interviewer_survey_submit($key){
-    $action_name = theme('review360_interviewer_survey_submitted',array('user_key'=>$key));
+function review360_interviewer_survey_submit($key,$nid){
+    $action_name = theme('review360_interviewer_survey_submitted',array('user_key'=>$key,'nid'=>$nid));
     $pageContent = theme('right_content', array('page_content' => $action_name, 'is_html' => true));
     return $pageContent;
+}
+
+function review360_interviewer_survey_generate_ajax(){
+    $user_key = $_POST['user_key'];
+    $nid= $_POST['nid'];
+    update_user_exam_status($nid);
+    $query = "select * from review360_survey_user_exam rsue "
+            . "where exam_nid = $nid";
+    $exam = db_query($query)->fetchObject();
+    generate_survey_result_by_sv($exam);
+    $is_generated = generate_report($exam);
+   
+    if ($is_generated) {
+        echo drupal_json_output(array('status' => 'success'));
+    } else {
+        echo drupal_json_output(array('status' => 'failed'));
+    }
+}
+
+function generate_report($exam){
+    require_once drupal_get_path('module', 'review360_base') . '/lib/ReportGenerator/ReportCreator.php';
+    $review_folder = DEFAULT_WORDPATH . $exam->s_id;
+    $zip_is_exist = file_exists($review_folder);
+    if(!$zip_is_exist){
+        create_review_report_folder($review_folder);
+    }
+    $report =new ReportCreator(DEFAULT_WORDTEMPLATE,$review_folder);
+    $path = $report->generate_report($exam);
+    return file_exists($path);
+}
+
+function create_review_report_folder($dirname) {
+    dirname($dirname);
+    mkdir($dirname, 0777, true);
+    return $dirname;
 }
