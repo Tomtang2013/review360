@@ -59,7 +59,10 @@ class ReportCreator{
         $document->set_documentXML($doc);
         $pix = $exam->s_id."_".$exam->nick_name;
 //        $pix = iconv('utf-8', 'gbk', $user->u_name) ;
-        $document->save($this->_outPutPath."/report_".$pix.".docx");
+        
+        $file_name = $this->_outPutPath."/report_".$pix.".docx";
+        $file_name = iconv('utf-8','gbk',$file_name); 
+        $document->save($file_name);
         return $this->_outPutPath."/report_".$pix.".docx";
     }
 }

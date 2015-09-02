@@ -49,7 +49,7 @@
      });   
      function appendTRNickName(tb,name){
         var tr = jQuery('<tr></tr>');
-        tr.append(jQuery('<td colspan="3">'+name+'</td>'));
+        tr.append(jQuery('<td colspan="5">'+name+'</td>'));
         return  tb.append(tr);
      }
      function appendTR(tb,value){

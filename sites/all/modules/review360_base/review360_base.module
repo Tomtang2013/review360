@@ -1,5 +1,6 @@
 <?php
-
+defined('DEFAULT_WORDTEMPLATE') or define('DEFAULT_WORDTEMPLATE', 'sites/default/files/generateFiles/DiscTemp.docx');
+defined('DEFAULT_WORDPATH') or define('DEFAULT_WORDPATH', 'sites/default/files/generateFiles/');
 // $Id: review360_base.info,v 1.4 2011/07/04 13:25:57 dries Exp $
 /**
  * Implementation of hook_init
@@ -477,6 +478,7 @@ function review360_base_export_zip_file($file_name,$get_url){
     header('Content-Type: application/zip');
     header('Content-Disposition: attachment; filename='.$file_name);
     header("Connection: close");
+  
     readfile($get_url);
     return true;
 }
@@ -610,13 +612,13 @@ function engaged_array(){
 function experience_array(){
     return array(
             0=>'-- 请选择 --',
-            1=>'1年以下',
-            2=>'1~2年',
-            3=>'2~3年',
-            4=>'3~5年',
-            5=>'5~10年',
-            6=>'10~20年',
-            7=>'20年以上',
+            '1年以下'=>'1年以下',
+            '1~2年'=>'1~2年',
+            '2~3年'=>'2~3年',
+            '3~5年'=>'3~5年',
+            '5~10年'=>'5~10年',
+            '10~20年'=>'10~20年',
+            '20年以上'=>'20年以上',
         );
 }
 
@@ -641,12 +643,12 @@ function specialty_array(){
 function bachelor_array(){
     return array(
             0=>'-- 请选择 --',
-            1=>'高中以下',
-            2=>'中专或高中',
-            3=>'大专',
-            4=>'大学本科',
-            5=>'硕士研究生',
-            6=>'博士研究生及以上',
+            '高中以下'=>'高中以下',
+            '中专或高中'=>'中专或高中',
+            '大专'=>'大专',
+            '大学本科'=>'大学本科',
+            '硕士研究生'=>'硕士研究生',
+            '博士研究生及以上'=>'博士研究生及以上',
         );
 }
 
@@ -911,4 +913,58 @@ function update_user_exam_status($nid){
          ->condition('exam_nid', $nid)
          ->condition('is_submited', 0)
          ->execute();
+}
+
+function create_folder_if_not_exist($dirname) {
+    $zip_is_exist = file_exists($dirname);
+    if(!$zip_is_exist){
+        create_folder($dirname);
+    }
+}
+
+function create_folder($dirname) {
+    dirname($dirname);
+    mkdir($dirname, 0777, true);
+    return $dirname;
+}
+
+function zip_folder($zip_name, $fold_path,$review_name) {
+    require_once drupal_get_path('module', 'review360_base') . '/lib/ReportGenerator/ReportCreator.php';
+    $z = new ZipArchive();
+    $z->open(DEFAULT_WORDPATH . $zip_name, ZIPARCHIVE::CREATE);
+    folderToZip($fold_path, $z,$review_name);
+    $z->close();
+}
+
+
+function folderToZip($folder, &$zipFile, $subfolder = null) {
+    if ($zipFile == null) {
+        // no resource given, exit
+        return false;
+    }
+
+    $end_split = str_split($folder);
+    $sub_end_split = str_split($subfolder);
+    // we check if $folder has a slash at its end, if not, we append one
+    $folder .= end($end_split) == "/" ? "" : "/";
+    $subfolder .= end($sub_end_split) == "/" ? "" : "/";
+    // we start by going through all files in $folder
+    $handle = opendir($folder);
+    while ($f = readdir($handle)) {
+        if ($f != "." && $f != "..") {
+            if (is_file($folder . $f)) {
+                // if we find a file, store it
+                // if we have a subfolder, store it there
+                if ($subfolder != null)
+                    $zipFile->addFile($folder . $f, $subfolder . $f);
+                else
+                    $zipFile->addFile($folder . $f);
+            } elseif (is_dir($folder . $f)) {
+                // if we find a folder, create a folder in the zip
+                $zipFile->addEmptyDir($f);
+                // and call the function again
+                folderToZip($folder . $f, $zipFile, $f);
+            }
+        }
+    }
 }

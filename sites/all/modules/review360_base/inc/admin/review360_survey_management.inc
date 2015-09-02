@@ -37,6 +37,11 @@ function review360_survey_report_export($survey_id) {
     $survey = get_survey_by_id($survey_id);
     $file_name = $survey->survey_name . ".zip";
     $src_file_name = $survey_id . ".zip";
+    
+    $review_folder = DEFAULT_WORDPATH . $survey_id;
+    $zip_name = $survey_id.'.zip';
+    zip_folder($zip_name,$review_folder,$survey_id);
+    
     $get_url = DEFAULT_WORDPATH . $src_file_name;
     $get_url = drupal_realpath($get_url);
     review360_base_export_zip_file($file_name, $get_url);
@@ -219,7 +224,7 @@ function generate_survey_user_report_batch($exams){
 
 
 function export_user_key($survey,$fileName){
-
+    global $base_url;
    $user_keys =get_user_keys($survey->survey_id);
    $headArr = array( "key", "url");
     $objPHPExcel = new PHPExcel();
@@ -236,6 +241,9 @@ function export_user_key($survey,$fileName){
         $span = ord("A");
         foreach ($rows as $keyName => $value) {
             $j = chr($span);
+            if($value == "http://") {
+                $value = $base_url.'/?q=interviewer/onboard';
+            }
             $objActSheet->setCellValue($j . $column, $value);
             $span++;
         }
@@ -541,6 +549,7 @@ function review360_survey_edit_form($form_state, $args) {
                 '#attributes' => array(
                     'class' => array(
                         'btn ',
+                        'btn-primary'
                     ),
                     'data-loading-text'=>'准备导出...',
                     'data-toggle' =>'tooltip',
@@ -585,10 +594,11 @@ function review360_survey_edit_form_validate($form, &$form_state) {
         form_set_error('survey_key', t('调查识别码重复。'));
     }
     
-    $pattern = "/^[0-9]\d*$/";
+    $pattern = "/^[1-9]\d*$/";
     if( !preg_match( $pattern, $form_state['values']['survey_user_num'] )){
         form_set_error('survey_user_num', t('参与人员必须为正整数。'));
     } 
+    
     if (empty($form_state['values']['survey_start_date'])) {
         form_set_error('survey_start_date',t('调查开始时间不能为空。'));
     }
@@ -640,6 +650,10 @@ function review360_survey_edit_form_submit($form, &$form_state) {
     } else if('保存修改并激活调查' === $form_state['values']['op']){
         store_draft_update($survey);
         if(active_survey_by_id($survey['survey_id'],$survey['survey_exams_nid'],$survey['survey_key']))   {
+            $review_folder = DEFAULT_WORDPATH . $survey['survey_id'];
+            $empty = DEFAULT_WORDPATH . $survey['survey_id']."/empty";
+            create_folder_if_not_exist($review_folder);
+            create_folder_if_not_exist($empty);
             $count = create_survey_user_key($survey['survey_user_num'],$survey['survey_id'],$survey['survey_key']);
             drupal_set_message(t("调查激活成功,生成用户代码 $count 条。"));
         }
@@ -803,7 +817,9 @@ function active_survey_by_id($id,$exam_nids,$survey_key){
           ))
         ->condition('survey_id', $id)
         ->execute();
-     if($rst > 0) return true;
+     if($rst > 0) {
+         return true;
+     }
      return false;
 }
 

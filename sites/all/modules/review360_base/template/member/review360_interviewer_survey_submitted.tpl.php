@@ -25,7 +25,7 @@ $generate_url = $base_url."/interviewer/survey/generate";
 
 $query = "select count(nid)>0 as has_result from review360_survey_exam_result where nid=$nid";
 $has_result = db_query($query)->fetchObject();
-dd($has_result->has_result);
+$has_result->has_result = 0;
 ?>
 
 <input id="generate_url" type="hidden" value="<?php print $generate_url; ?>"/>
