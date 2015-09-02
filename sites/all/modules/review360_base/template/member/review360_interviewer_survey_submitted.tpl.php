@@ -23,8 +23,7 @@ if (!isset($nid) || empty($nid)) {
 $back_url = $base_url.'/interviewer/exam/'.$user_key;
 $generate_url = $base_url."/interviewer/survey/generate";
 
-$query = "select count(nid)>0 as has_result from review360_survey_exam_result where nid=$nid";
-$has_result = db_query($query)->fetchObject();
+$has_result = is_generate_result($nid);
 $has_result->has_result = 0;
 ?>
 

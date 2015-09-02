@@ -61,7 +61,7 @@ class ReportCreator{
         $file_name = $this->_outPutPath."/report_".$pix.".docx";
         $file_name = iconv('utf-8','gbk',$file_name); 
         $document->save($file_name);
-        return $this->_outPutPath."/report_".$pix.".docx";
+        return $file_name;
     }
 }
 ?>

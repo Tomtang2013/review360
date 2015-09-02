@@ -26,6 +26,12 @@ function review360_interviewer_survey_submit($key,$nid){
 function review360_interviewer_survey_generate_ajax(){
     $user_key = $_POST['user_key'];
     $nid= $_POST['nid'];
+    $has_result = is_generate_result($nid);
+    if($has_result->has_result>0){
+        echo drupal_json_output(array('status' => 'already generate report.'));
+        return;
+    }
+    
     update_user_exam_status($nid);
     $query = "select rsue.*,rsu.u_name from review360_survey_user_exam rsue  
         inner join review360_survey_user rsu on 

@@ -977,3 +977,8 @@ function folderToZip($folder, &$zipFile, $subfolder = null) {
         }
     }
 }
+
+function is_generate_result($nid){
+    $query = "select count(nid)>0 as has_result from review360_survey_exam_result where nid=$nid";
+    return db_query($query)->fetchObject();
+}
