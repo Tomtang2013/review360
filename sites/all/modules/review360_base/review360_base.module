@@ -483,6 +483,12 @@ function review360_base_export_zip_file($file_name,$get_url){
     return true;
 }
 
+function del_old_zip_file($path){
+  if(file_exists($path)) {
+       return unlink($path);
+  }
+}
+
 function random_string($length = 8) {
     $str = '';
     for ($i = 0; $i < $length; $i++) {

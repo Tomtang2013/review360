@@ -42,6 +42,7 @@ function review360_interviewer_survey_generate_ajax(){
     }
 }
 
+
 function generate_report($exam){
     require_once drupal_get_path('module', 'review360_base') . '/lib/ReportGenerator/ReportCreator.php';
     $review_folder = DEFAULT_WORDPATH . $exam->s_id;
@@ -51,6 +52,9 @@ function generate_report($exam){
     }
     $report =new ReportCreator(DEFAULT_WORDTEMPLATE,$review_folder);
     $path = $report->generate_report($exam);
+    $zip_path = DEFAULT_WORDPATH . $exam->s_id.".zip";
+    $zip_path = drupal_realpath($zip_path);
+
     return file_exists($path);
 }
 
