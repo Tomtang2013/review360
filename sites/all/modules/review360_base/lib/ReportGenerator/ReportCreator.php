@@ -57,12 +57,15 @@ class ReportCreator{
         $doc = str_replace('w:themeColor="background2"', '', $doc);
 
         $document->set_documentXML($doc);
-        $pix = $exam->s_id."_".$exam->nick_name;
+        $nick_name = $exam->nick_name;
+
+        $pix = $exam->s_id."_".$nick_name;
 //        $pix = iconv('utf-8', 'gbk', $user->u_name) ;
         
         $file_name = $this->_outPutPath."/report_".$pix.".docx";
-        $file_name = iconv('utf-8','gbk',$file_name); 
-        $document->save($file_name);
+     //   $file_name = iconv('utf-8','gbk',$file_name); 
+//        $document->save($file_name);
+        $document->save_path($file_name,$this->_outPutPath."/","report_".$pix.".docx");
         return $this->_outPutPath."/report_".$pix.".docx";
     }
 }

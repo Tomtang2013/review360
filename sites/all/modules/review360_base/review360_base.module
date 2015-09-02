@@ -934,6 +934,7 @@ function zip_folder($zip_name, $fold_path,$review_name) {
     $z->open(DEFAULT_WORDPATH . $zip_name, ZIPARCHIVE::CREATE);
     folderToZip($fold_path, $z,$review_name);
     $z->close();
+    chmod(DEFAULT_WORDPATH . $zip_name,777);
 }
 
 
