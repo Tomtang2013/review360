@@ -54,7 +54,7 @@ function generate_report($exam){
     $path = $report->generate_report($exam);
     $zip_path = DEFAULT_WORDPATH . $exam->s_id.".zip";
     $zip_path = drupal_realpath($zip_path);
-
+    del_old_zip_file($zip_path);
     return file_exists($path);
 }
 

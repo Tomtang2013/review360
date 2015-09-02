@@ -485,8 +485,10 @@ function review360_base_export_zip_file($file_name,$get_url){
 
 function del_old_zip_file($path){
   if(file_exists($path)) {
-       return unlink($path);
+      chmod($path,0777);
+      unlink($path);
   }
+  return 0;
 }
 
 function random_string($length = 8) {
@@ -940,7 +942,7 @@ function zip_folder($zip_name, $fold_path,$review_name) {
     $z->open(DEFAULT_WORDPATH . $zip_name, ZIPARCHIVE::CREATE);
     folderToZip($fold_path, $z,$review_name);
     $z->close();
-    chmod(DEFAULT_WORDPATH . $zip_name,777);
+    
 }
 
 
