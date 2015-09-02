@@ -27,8 +27,10 @@ function review360_interviewer_survey_generate_ajax(){
     $user_key = $_POST['user_key'];
     $nid= $_POST['nid'];
     update_user_exam_status($nid);
-    $query = "select * from review360_survey_user_exam rsue "
-            . "where exam_nid = $nid";
+    $query = "select rsue.*,rsu.u_name from review360_survey_user_exam rsue  
+        inner join review360_survey_user rsu on 
+        rsue.s_id = rsu.survey_id and rsue.user_key = rsu.survey_user_key
+        where exam_nid = $nid";
     $exam = db_query($query)->fetchObject();
     generate_survey_result_by_sv($exam);
     $is_generated = generate_report($exam);
