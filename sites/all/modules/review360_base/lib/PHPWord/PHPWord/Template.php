@@ -115,31 +115,6 @@ class PHPWord_Template {
 
     }
     
-      public function save_path($strFilename,$path,$file_name) {
-        if(file_exists($strFilename)) {
-            unlink($strFilename);
-        }
-        $this->_objZip->addFromString('word/document.xml', $this->_documentXML);
-        
-        // Close zip file
-        if($this->_objZip->close() === false) {
-            throw new Exception('Could not close zip file.');
-        }
-//       $file_name =  iconv("utf-8", "gb2312", $file_name);
-
-       $r = $this->_re_save( $path.$file_name);
-    }
-    
-    private function _re_save($path){
-        $handle = fopen($path, "wb");
-	if (!$handle) {
-		echo "fail";
-		return;
-	}
-	fwrite($handle, '中国');
-	fclose($handle);
-    }
-    
     public function save_image($id,$filepath,&$document=null) { 
         if(file_exists($filepath))
         {
