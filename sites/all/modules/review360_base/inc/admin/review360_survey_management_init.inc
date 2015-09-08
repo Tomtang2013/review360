@@ -3,7 +3,7 @@ require_once dirname(__FILE__) . '/../../lib/PHPExcel/PHPExcel/IOFactory.php';
 
 function review360_surveymanagement_init_call_back(){
     $pageContent = '<h2>初始化评分标准页！</h2>';
-    read_excel_insert();
+//    read_excel_insert();
     return $pageContent;
 }
 
