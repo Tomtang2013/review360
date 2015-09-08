@@ -3,7 +3,7 @@ require_once dirname(__FILE__) . '/../../lib/PHPExcel/PHPExcel/IOFactory.php';
 
 function review360_surveymanagement_init_call_back(){
     $pageContent = '<h2>初始化评分标准页！</h2>';
-    //read_excel_insert();
+    read_excel_insert();
     return $pageContent;
 }
 
@@ -45,9 +45,9 @@ function read_excel_insert(){
 }
 
 function insert_review360_user_result($row){
+    $row['rst_create_date'] = time();
     $row['rst_update_date'] = time();
-    $row['rst_update_date'] = time();
-    $rst = db_insert('review360_user_result')->fields($row)->execute();
+    $rst = db_insert('review360_report_str_result')->fields($row)->execute();
     if ($rst) {
         echo drupal_json_output(array('status' => 'success'));
     } else {
