@@ -77,8 +77,8 @@ function prepareTR(obj){
     var td2 = prepareTD(obj.survey_name);
     var td3 = prepareTD(obj.survey_user_num);
     var td4 = prepareTD(obj.survey_status_str);
-    var td5 = prepareTD(obj.start_date);
-    var td6 = prepareTD(obj.end_date);
+    var td5 = prepareTD(obj.start_date_str);
+    var td6 = prepareTD(obj.end_date_str);
     var survey_edit_url = jQuery('#survey_edit_url').val()+obj.survey_id;
     var td7 = prepareTD(jQuery('<a class="icon_edit" href="'+survey_edit_url+'"></a>'));
     var td8 = prepareTD(jQuery('<a class="icon_trash"href="'+obj.survey_id+'"></a>'));

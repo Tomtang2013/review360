@@ -10,6 +10,7 @@ $survey_report_export_url = $base_url . '/?q=surveymanagement/report_export/';
 $survey_report_excel_export_url = $base_url . '/?q=surveymanagement/report_excel_export/';
 
 $exams = get_selectable_exam();
+
 ?>
 <script type="text/javascript">
     jQuery(function () {
@@ -97,22 +98,24 @@ $exams = get_selectable_exam();
                 <div class="row">
                     <table class="table bs-example table-striped table-responsive table-hover" style="margin-left:10px;width:90%;">
                         <thead>
-                            <tr>
+                            <tr >
                                 <th>勾选</th>
                                 <th>编号</th>
                                 <th>问卷名称</th>
                                 <th>题目(数量)</th>
+                                <th>作答时间(分钟)</th>
                             </tr>
                         </thead>
                         <tbody id="exam_table_tb">
                             <?php foreach ($exams as $exam): ?>
-                                <tr>
+                                <tr >
                                     <td class=""><input class="exam_checkbox"
                                                         data-exam-name="<?php print $exam->exam_name; ?>"
                                                         type="checkbox" name="exam_ids" aria-label="" value="<?php print $exam->nid; ?>"></td>
                                     <td class=""><?php print $exam->exam_id; ?></td>
                                     <td class=""><?php print $exam->exam_name; ?></td>
                                     <td class=""><?php print $exam->number; ?></td>
+                                    <td class=""><?php print $exam->spend_time; ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

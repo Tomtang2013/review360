@@ -4,9 +4,11 @@ jQuery(function () {
         var link = jQuery('#exam_edit_name_url').val();
        
         var data  = {exam_name:jQuery('#exam-name-input').val(),
+                     spend_time:jQuery('#exam-spend-time-input').val(),
                      exam_id:jQuery('#exam_id').val()};
         jQuery.post(link,data,function(req){
-            btn.button('reset');
+//            btn.button('reset');
+            location.reload();
         });
     });
     
@@ -22,4 +24,6 @@ jQuery(function () {
             return false;
         }
     });
+    
+    
 });

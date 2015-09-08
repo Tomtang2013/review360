@@ -46,7 +46,7 @@
                 <th>操作</th>
                 <th>评测</th>
                 <th>状态</th>
-                <th>预计时间</th>
+                <th>作答时间</th>
             </tr>
         </thead>
         <tbody id="exam_table_tb">
@@ -60,6 +60,7 @@
                    node_submit($exam);
                    node_save($exam);
                 }
+                $exam_infor = get_selectable_exam_by_name($exam_nid->nick_name);
 
             ?>
             <tr>
@@ -77,7 +78,7 @@
                 </td >
                 <td class=""  style="line-height:60px;"><?php print $exam_nid->nick_name; ?></td>
                 <td class=""  style="line-height:60px;"><?php print $is_submited == 0?"未答题":"已完成"?></td>
-                <td class=""  style="line-height:60px;">12分钟</td>
+                <td class=""  style="line-height:60px;"><?php print $exam_infor->spend_time." 分钟"?></td>
             </tr>
             <?php endforeach;?>
         </tbody>

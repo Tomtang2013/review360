@@ -569,16 +569,6 @@ function review360_survey_edit_form($form_state, $args) {
     return $form;
 }
 
-function get_selectable_exam(){
-    $query = "select re.*,ceil(count(wc.cid)/2) number from
-            review360_exam re inner join 
-            webform_component wc on re.nid = wc.nid and type = 'select'
-            group by re.nid";
-    $result = db_query($query)->fetchAll();
-    
-    return $result;
-}
-
 function review360_survey_edit_form_validate($form, &$form_state) {
     if (empty($form_state['values']['survey_name'])) {
         form_set_error('survey_name',t("调查名称不能为空。"));
@@ -975,6 +965,8 @@ function get_survey_list(){
     $result = db_query($query)->fetchAll();
     foreach($result as $survey){
         $survey->survey_status_str = prepare_survey_status_str($survey->survey_status);
+        $survey->start_date_str = empty($survey->start_date)?'': prepare_timestamp_to_str($survey->start_date);
+        $survey->end_date_str = empty($survey->end_date)?'':prepare_timestamp_to_str($survey->end_date);
     }
     return $result;
 }

@@ -18,18 +18,53 @@ function review360_exam_edit($exam_id){
 function review360_group_change_name_ajax(){
     $exam_name = $_POST['exam_name'];
     $exam_id = $_POST['exam_id'];
-    $rst = db_update('review360_exam')
-      ->fields(array(
-        'exam_name' => $exam_name,
-        'update_date' => time(),
-      ))
-      ->condition('exam_id', $exam_id)
-      ->execute();
-    if ($rst) {
-        echo drupal_json_output(array('status' => 'success'));
+    $spend_time = $_POST['spend_time'];
+    if(validate_exam_post_infor($exam_name,$spend_time,$exam_id)){
+         echo drupal_json_output(array('status' => 'failed'));
     } else {
-        echo drupal_json_output(array('status' => 'failed'));
+        $rst = db_update('review360_exam')
+            ->fields(array(
+              'exam_name' => $exam_name,
+              'spend_time'=>$spend_time,
+              'update_date' => time(),
+            ))
+            ->condition('exam_id', $exam_id)
+            ->execute();
+        if ($rst) {
+            drupal_set_message(t("问卷信息修改成功。")); 
+            echo drupal_json_output(array('status' => 'success'));
+        } else {
+            echo drupal_json_output(array('status' => 'failed'));
+        }
     }
+}
+
+function validate_exam_post_infor($exam_name,$spend_time,$e_id){
+    if( is_exam_duplicate_naming($exam_name,$e_id)){
+        form_set_error('', t("该试题名称已经存在，请使用其他名称。"));
+        return true;
+    }
+    
+    if(is_available_spend_time($spend_time)){
+        form_set_error('', t("花费时间需为正整数，请校验后重新输入。"));
+        return true;
+    }
+    return false;
+}
+
+function is_available_spend_time($time){
+    $pattern = "/^[1-9]\d*$/";
+    if( !preg_match( $pattern, $time )){
+        return true;
+    } 
+    return false;
+}
+
+function is_exam_duplicate_naming($name,$e_id){
+    $query = "select count(exam_id)>0 is_duplicate from review360_exam
+            where exam_id != $e_id and exam_name = '$name'";
+    $result = db_query($query)->fetchObject();
+    return $result->is_duplicate;
 }
 
 function get_exam_list_ajax(){
@@ -152,7 +187,7 @@ function review360_exam_upload_form($form_state, $args) {
     $form['#attributes']['enctype'] = 'multipart/form-data';
     $form['file_upload'] = array(
         '#type' => 'file',
-        '#prefix' => '<div class="input-group">',
+        '#prefix' => '<div class="col-md-12 form-line"><div class="input-group">',
     );
 
     $form['exam_id'] = array('#type' => 'hidden', '#value' => $exam->exam_id);
@@ -191,7 +226,7 @@ function review360_exam_upload_form($form_state, $args) {
             'data-placement'=>'bottom',
             'title'=>'该问卷尚未有问题，请先上传。'
             ),
-            '#suffix' => '</span></div>',
+            '#suffix' => '</span></div></div>',
         );
     } else {
         $form['submit_export'] = array(
@@ -202,7 +237,7 @@ function review360_exam_upload_form($form_state, $args) {
                     'btn btn-success',
                 ),
             ),
-            '#suffix' => '</span></div>',
+            '#suffix' => '</span></div></div>',
         );
     }
 
@@ -401,7 +436,7 @@ function export_exam_file($exam_id){
             $span = ord("A");
             foreach ($rows as $keyName => $value) {
                 $j = chr($span);
-                $objActSheet->setCellValue($j . $column, $value);
+                $objActSheet->setCellValue($j . $column, trim($value));
                 $span++;
             }
             $column++;

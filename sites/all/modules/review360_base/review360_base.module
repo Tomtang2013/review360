@@ -679,6 +679,27 @@ function generate_survey_result_by_id($sid){
     }
 }
 
+
+function get_selectable_exam(){
+    $query = "select re.*,ceil(count(wc.cid)/2) number from
+            review360_exam re inner join 
+            webform_component wc on re.nid = wc.nid and type = 'select'
+            group by re.nid";
+    $result = db_query($query)->fetchAll();
+    
+    return $result;
+}
+
+function get_selectable_exam_by_name($name){
+    $query = "select *  from review360_exam re "
+            . " where exam_name = '$name'";
+    dd($query);
+    $result = db_query($query)->fetchObject();
+    
+    return $result;
+}
+
+
 function calculate_age($birthday){
     $birth=prepare_timestamp_to_str($birthday);
     list($by,$bm,$bd)=explode('-',$birth);
