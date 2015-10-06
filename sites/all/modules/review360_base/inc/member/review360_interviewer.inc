@@ -105,9 +105,9 @@ function survey_key_already_used($key,$email){
             and u_email != '' and u_email = '$email'";
     $result = db_query($query)->fetchField();
     if($result == 1) {
-        return true;
+        return false;
     }
-    return false;
+    return true;
 }
 
 function survey_key_validate($key){
