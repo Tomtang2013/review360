@@ -20,8 +20,8 @@ if (!isset($nid) || empty($nid)) {
     return;
 }
 
-$back_url = $base_url.'/interviewer/exam/'.$user_key;
-$generate_url = $base_url."/interviewer/survey/generate";
+$back_url = $base_url.'/?q=interviewer/exam/'.$user_key;
+$generate_url = $base_url."/?q=interviewer/survey/generate";
 
 $has_result = is_generate_result($nid);
 $has_result->has_result = 0;
