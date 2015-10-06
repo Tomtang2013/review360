@@ -2,12 +2,12 @@
 global $base_url;
 
 if(!isset($user_key) || empty($user_key)){
-    drupal_goto($base_url.'/interviewer/onboard');
+    drupal_goto($base_url.'/?q=interviewer/onboard');
     return;
 } 
 $user = get_user_infor_by_key($user_key);
 if(!isset($user) || empty($user)){
-    drupal_goto($base_url.'/interviewer/onboard');
+    drupal_goto($base_url.'/?q=interviewer/onboard');
     return;
 } 
 
@@ -15,7 +15,7 @@ if (!isset($nid) || empty($nid)) {
     drupal_set_message(
             t('请选择评测后开始答题。')
     );
-    drupal_goto($base_url . '/interviewer/exam/' . $user_key);
+    drupal_goto($base_url . '/?q=interviewer/exam/' . $user_key);
 
     return;
 }
