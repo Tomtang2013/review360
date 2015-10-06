@@ -79,8 +79,6 @@ function review_interviewer_onboard_form_validate($form, &$form_state) {
     if (empty($form_state['values']['interview_email'])) {
         form_set_error('interview_email',t("邮箱地址不能为空。"));
     }
-    
-    
     if (empty($form_state['values']['interview_key'])) {
          form_set_error('interview_key',t("调查识别码不能为空。"));
     } 
@@ -93,6 +91,23 @@ function review_interviewer_onboard_form_validate($form, &$form_state) {
     if( !survey_key_validate(  $form_state['values']['interview_key'] )){
         form_set_error('interview_key', t('该识别代码不存在，请核对后重试。'));
     } 
+    
+    if(survey_key_already_used($form_state['values']['interview_key'],$form_state['values']['interview_email'] )){
+        form_set_error('interview_key', t('该识别代码已被他人使用，请联系管理员。'));
+    }
+}
+
+function survey_key_already_used($key,$email){
+    $query = "select count(su_id) used from 
+            review360_survey_user
+            where 1=1
+            and survey_user_key = '$key'
+            and u_email != '' and u_email = '$email'";
+    $result = db_query($query)->fetchField();
+    if($result == 1) {
+        return true;
+    }
+    return false;
 }
 
 function survey_key_validate($key){
