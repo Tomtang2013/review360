@@ -102,7 +102,8 @@ function survey_key_already_used($key,$email){
             review360_survey_user
             where 1=1
             and survey_user_key = '$key'
-            and u_email != '' and u_email = '$email'";
+            and (u_email is Null or u_email = '$email')";
+
     $result = db_query($query)->fetchField();
     if($result == 1) {
         return false;
