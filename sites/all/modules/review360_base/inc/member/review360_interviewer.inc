@@ -459,7 +459,8 @@ function review_interviewer_infor_form_validate($form, &$form_state) {
         form_set_error('infor_email', t('邮件地址不合法，请重新填写。'));
     } 
     
-    $pattern = "/^13[0-9]{1}[0-9]{8}$|15[0189]{1}[0-9]{8}$|189[0-9]{8}$/";
+//    $pattern = "/^1[0-9]{1}[0-9]{1}[0-9]{8}$|15[0189]{1}[0-9]{8}$|189[0-9]{8}$/";
+    $pattern ="/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/";
     if(!preg_match($pattern,$form_state['values']['infor_p_number'])){    
         form_set_error('infor_p_number', t('手机号码不合法，请重新填写。'));
     }
