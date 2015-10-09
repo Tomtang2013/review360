@@ -8,7 +8,7 @@
        variable_set('serach_query_str','');
     }
    
-    $rst_url = $base_url.'/candidate/filter/surveyrst';
+    $rst_url = $base_url.'/?q=candidate/filter/surveyrst';
 
 ?>
 <script type="text/javascript">

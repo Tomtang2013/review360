@@ -693,7 +693,6 @@ function get_selectable_exam(){
 function get_selectable_exam_by_name($name){
     $query = "select *  from review360_exam re "
             . " where exam_name = '$name'";
-    dd($query);
     $result = db_query($query)->fetchObject();
     
     return $result;

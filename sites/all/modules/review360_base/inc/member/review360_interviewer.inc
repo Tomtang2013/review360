@@ -79,8 +79,6 @@ function review_interviewer_onboard_form_validate($form, &$form_state) {
     if (empty($form_state['values']['interview_email'])) {
         form_set_error('interview_email',t("邮箱地址不能为空。"));
     }
-    
-    
     if (empty($form_state['values']['interview_key'])) {
          form_set_error('interview_key',t("调查识别码不能为空。"));
     } 
@@ -93,6 +91,24 @@ function review_interviewer_onboard_form_validate($form, &$form_state) {
     if( !survey_key_validate(  $form_state['values']['interview_key'] )){
         form_set_error('interview_key', t('该识别代码不存在，请核对后重试。'));
     } 
+    
+    if(survey_key_already_used($form_state['values']['interview_key'],$form_state['values']['interview_email'] )){
+        form_set_error('interview_key', t('该识别代码已被他人使用，请联系管理员。'));
+    }
+}
+
+function survey_key_already_used($key,$email){
+    $query = "select count(su_id) used from 
+            review360_survey_user
+            where 1=1
+            and survey_user_key = '$key'
+            and (u_email is Null or u_email = '$email')";
+
+    $result = db_query($query)->fetchField();
+    if($result == 1) {
+        return false;
+    }
+    return true;
 }
 
 function survey_key_validate($key){
@@ -443,7 +459,8 @@ function review_interviewer_infor_form_validate($form, &$form_state) {
         form_set_error('infor_email', t('邮件地址不合法，请重新填写。'));
     } 
     
-    $pattern = "/^13[0-9]{1}[0-9]{8}$|15[0189]{1}[0-9]{8}$|189[0-9]{8}$/";
+//    $pattern = "/^1[0-9]{1}[0-9]{1}[0-9]{8}$|15[0189]{1}[0-9]{8}$|189[0-9]{8}$/";
+    $pattern ="/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/";
     if(!preg_match($pattern,$form_state['values']['infor_p_number'])){    
         form_set_error('infor_p_number', t('手机号码不合法，请重新填写。'));
     }
