@@ -304,7 +304,7 @@ function review360_base_menu() {
     );
     
      $items['interviewer/exam/%'] = array(
-        'title' => t('受访者登陆'),
+        'title' => t('试题选择'),
         'page callback'     => 'review360_interviewer_exam',
         'access arguments'  => array('review360_base_interviewer'),
         'file'              => 'inc/member/review360_interviewer_exam.inc',
@@ -313,7 +313,7 @@ function review360_base_menu() {
     );
      
       $items['interviewer/introduction/%/%'] = array(
-        'title' => t('受访者登陆'),
+        'title' => t('试题介绍'),
         'page callback'     => 'review360_interviewer_introduction',
         'access arguments'  => array('review360_base_interviewer'),
         'file'              => 'inc/member/review360_interviewer_exam.inc',
@@ -322,7 +322,7 @@ function review360_base_menu() {
     );
      
     $items['interviewer/survey/%/%'] = array(
-        'title' => t('受访者信息管理'),
+        'title' => t('受访者答题'),
         'page callback'     => 'review360_interviewer_survey',
         'access arguments'  => array('review360_base_interviewer'),
         'file'              => 'inc/member/review360_interviewer_survey.inc',
@@ -331,7 +331,7 @@ function review360_base_menu() {
     );
     
      $items['interviewer/survey/submitted/%/%'] = array(
-        'title' => t('受访者信息管理'),
+        'title' => t('试题提交'),
         'page callback'     => 'review360_interviewer_survey_submit',
         'access arguments'  => array('review360_base_interviewer'),
         'file'              => 'inc/member/review360_interviewer_survey.inc',
@@ -340,7 +340,7 @@ function review360_base_menu() {
     );
      
     $items['interviewer/survey/generate'] = array(
-        'title' => t('受访者信息管理'),
+        'title' => t('生成结果'),
         'page callback'     => 'review360_interviewer_survey_generate_ajax',
         'access arguments'  => array('review360_base_interviewer'),
         'file'              => 'inc/member/review360_interviewer_survey.inc',
@@ -348,6 +348,14 @@ function review360_base_menu() {
         'weight'            => -47,
     );
 
+    $items['interviewer/reportdl/%/%'] = array(
+        'title' => t('下载报告'),
+        'page callback'     => 'review360_interviewer_survey_report_download',
+        'access arguments'  => array('review360_base_interviewer'),
+        'file'              => 'inc/member/review360_interviewer_survey.inc',
+        'page arguments' => array(2,3),
+        'weight'            => -47,
+    );
     return $items;
 }
 
@@ -476,6 +484,17 @@ function review360_base_export_zip_file($file_name,$get_url){
     header("Content-Type: application/force-download");
     header("Content-Transfer-Encoding: binary");
     header('Content-Type: application/zip');
+    header('Content-Disposition: attachment; filename='.$file_name);
+    header("Connection: close");
+  
+    readfile($get_url);
+    return true;
+}
+
+function review360_base_export_doc_file($file_name,$get_url){
+    header("Content-Type: application/force-download");
+    header("Content-Transfer-Encoding: binary");
+    header('Content-Type: application/msword');
     header('Content-Disposition: attachment; filename='.$file_name);
     header("Connection: close");
   

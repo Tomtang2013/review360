@@ -13,7 +13,7 @@
     $goto_url = $base_url."/?q=interviewer/introduction/";
                            
     $exam_nids = get_user_exam_by_key($user_key);
-    
+    $report_download_url = $base_url."/?q=interviewer/reportdl/";
 ?>
 <div class="row">
      <div class="page-header">
@@ -53,6 +53,7 @@
             <?php foreach($exam_nids as $exam_nid): 
                 $exam = node_load($exam_nid->nid);
                 $url = $goto_url.$user_key."/$exam_nid->nid";
+                $report_url = $report_download_url.$user_key."/$exam_nid->nid";
                 $is_submited = is_submited($exam_nid->nid);
                 if($exam->webform['redirect_url'] == '<confirmation>'){
                    $exam->webform['redirect_url'] ='interviewer/survey/submitted/' . $user->survey_user_key."/".$exam->nid;
@@ -71,9 +72,13 @@
                         href="<?php print $url;?>"
                              type="submit">开始评测</a>
                     <?php else: ?>
-                        <div class="btn btn-success " 
+                        <div 
                             id="edit-exam-name-btn" 
-                             type="submit">已经完成</div>
+                             type="submit"> 
+                            <a class="btn btn-success " 
+                                id="edit-exam-name-btn" 
+                                href="<?php dd($report_url); print $report_url;?>"
+                                >下载报告</a></div>
                      <?php endif;?>
                 </td >
                 <td class=""  style="line-height:60px;"><?php print $exam_nid->nick_name; ?></td>
