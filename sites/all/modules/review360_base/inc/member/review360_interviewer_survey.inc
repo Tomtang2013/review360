@@ -1,8 +1,7 @@
 <?php
 
 defined('DEFAULT_WORDTEMPLATE') or define('DEFAULT_WORDTEMPLATE', 'sites/default/files/generateFiles/DiscTemp.docx');
-defined('DEFAULT_WORDPATH') or define('DEFAULT_WORDPATH', '/sites/default/files/generateFiles/');
-defined('DEFAULT_UBUNTU_WORDPATH') or define('DEFAULT_UBUNTU_WORDPATH', '/var/www/html/review360/');
+defined('DEFAULT_WORDPATH') or define('DEFAULT_WORDPATH', 'sites/default/files/generateFiles/');
 
 function review360_interviewer_survey_report_download($key,$nid){
     $user = get_user_by_key($key,$nid);
@@ -11,9 +10,9 @@ function review360_interviewer_survey_report_download($key,$nid){
     $get_url = DEFAULT_WORDPATH . $src_file_name;
     $get_url = drupal_realpath($get_url);
     if(!$get_url){
-        $get_url = DEFAULT_UBUNTU_WORDPATH .DEFAULT_WORDPATH . $src_file_name;
+        $get_url = getcwd().'/'.DEFAULT_WORDPATH . $src_file_name;
+        dd($get_url);
     }
-    
     review360_base_export_doc_file($file_name, $get_url);
 }
 
