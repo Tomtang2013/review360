@@ -6,13 +6,10 @@ defined('DEFAULT_WORDPATH') or define('DEFAULT_WORDPATH', 'sites/default/files/g
 function review360_interviewer_survey_report_download($key,$nid){
     $user = get_user_by_key($key,$nid);
     $file_name = 'report_'. $user->nick_name .'_'.$user->u_name.'.docx';
-    $src_file_name = $user->survey_id . '/report_' . $user->nick_name . '_'.$user->u_name.'.docx';
+    $src_file_name = $user->survey_id . '/report_' .iconv('utf-8','gbk',$user->nick_name) . '_'.iconv('utf-8','gbk',$user->u_name).'.docx';
     $get_url = DEFAULT_WORDPATH . $src_file_name;
     $get_url = drupal_realpath($get_url);
-    if(!$get_url){
-        $get_url = getcwd().'/'.DEFAULT_WORDPATH . $src_file_name;
-        dd($get_url);
-    }
+ 
     review360_base_export_doc_file($file_name, $get_url);
 }
 
