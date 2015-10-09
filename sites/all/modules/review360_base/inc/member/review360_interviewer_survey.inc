@@ -9,6 +9,8 @@ function review360_interviewer_survey_report_download($key,$nid){
     $src_file_name = $user->survey_id . '/report_' . $user->nick_name . '_'.$user->u_name.'.docx';
     $get_url = DEFAULT_WORDPATH . $src_file_name;
     $get_url = drupal_realpath($get_url);
+    dd($user);
+    dd($file_name);
     dd($get_url);
     review360_base_export_doc_file($file_name, $get_url);
 }
