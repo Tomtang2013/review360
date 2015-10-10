@@ -798,15 +798,25 @@ function load_survey_user_exam_by_sid_user_key($sid,$user_key){
 
 function generate_survey_result_by_sv($exam){
     $result = get_survey_rst_by_nid($exam->exam_nid);
-    insert_user_survey_result($result->in_working_me,$exam->s_id,$exam->se_id,$exam->exam_nid,"in_working_me");
-    insert_user_survey_result($result->innate,$exam->s_id,$exam->se_id,$exam->exam_nid,"innate");
-    insert_user_survey_result($result->other,$exam->s_id,$exam->se_id,$exam->exam_nid,"other");
-    insert_user_survey_result($result->stress,$exam->s_id,$exam->se_id,$exam->exam_nid,"stress");
+    
+    $in_working_me = prepare_rst_value("in_working_me",$result->d,$result->i,$result->s,$result->c);
+    $innate = prepare_rst_value("innate",$result->d,$result->i,$result->s,$result->c);
+    $other = prepare_rst_value("other",$result->d,$result->i,$result->s,$result->c);
+    $stress = prepare_stress_rst_value($in_working_me,$innate);
+  dd($in_working_me);
+  dd($innate);
+  dd($other);
+  dd($stress);
+  
+    insert_user_survey_result($result->in_working_me,$exam->s_id,$exam->se_id,$exam->exam_nid,$in_working_me,"in_working_me");
+    insert_user_survey_result($result->innate,$exam->s_id,$exam->se_id,$exam->exam_nid,$innate,"innate");
+    insert_user_survey_result($result->other,$exam->s_id,$exam->se_id,$exam->exam_nid,$other,"other");
+    insert_user_survey_result($result->stress,$exam->s_id,$exam->se_id,$exam->exam_nid,$stress,"stress");
 
     update_status_of_generate_report($exam->exam_nid);
 }
 
-function insert_user_survey_result($rst,$sid,$survey_exam_id,$nid,$quadrant){
+function insert_user_survey_result($rst,$sid,$survey_exam_id,$nid,$value,$quadrant){
     $field_array = array();
     $field_array['sid'] = $sid;
     $field_array['se_id'] = $survey_exam_id;
@@ -816,11 +826,72 @@ function insert_user_survey_result($rst,$sid,$survey_exam_id,$nid,$quadrant){
     $field_array['i'] = $rst->i;
     $field_array['s'] = $rst->s;
     $field_array['c'] = $rst->c;
+    $field_array['d_value'] = $value->d_value;
+    $field_array['i_value'] = $value->i_value;
+    $field_array['s_value'] = $value->s_value;
+    $field_array['c_value'] = $value->c_value;
     $field_array['update_date'] = time();
     $field_array['create_date'] = time();
     $rst = db_insert('review360_survey_exam_result')->fields($field_array)->execute();
 }
 
+function prepare_rst_value($quadrant,$d,$i,$s,$c){
+    switch($quadrant){
+       case 'in_working_me': return prepare_in_working_me_rst_value($d,$i,$s,$c);
+       case 'innate': return prepare_innate_rst_value($d,$i,$s,$c);
+       case 'other' : return prepare_other_rst_value($d,$i,$s,$c);
+   }
+}
+
+function max_min_rst(&$std){
+    $std->d_value = max_min_value($std->d_value);
+    $std->i_value = max_min_value($std->i_value);
+    $std->s_value = max_min_value($std->s_value);
+    $std->c_value = max_min_value($std->c_value);
+    return $std;
+}
+
+function max_min_value($value){
+    if($value > 95) return 95;
+    if($value < 5) return 5;
+    return $value;
+}
+
+function prepare_stress_rst_value($out,$inner){
+    $std = new stdClass();
+    $std->d_value = $out->d_value - $inner->d_value;
+    $std->i_value = $out->i_value - $inner->i_value;
+    $std->s_value = $out->s_value - $inner->s_value;
+    $std->c_value = $out->c_value - $inner->c_value;
+    return max_min_rst($std);
+}
+
+function prepare_other_rst_value($d,$i,$s,$c){
+    $std = new stdClass();
+    $std->d_value = (($d-6)/4.95)*1.5+50;
+    $std->i_value = (($i-6)/4.94)*1.5+50;
+    $std->s_value = (($s-6)/4.77)*1.5+50;
+    $std->c_value = (($c-6)/6.30)*1.5+50;
+    return max_min_rst($std);
+}
+
+function prepare_innate_rst_value($d,$i,$s,$c){
+    $std = new stdClass();
+    $std->d_value = $d/2.43*1.5+50;
+    $std->i_value = $i/2.72*1.5+50;
+    $std->s_value = $s/2.07*1.5+50;
+    $std->c_value = $c/2.62*1.5+50;
+    return max_min_rst($std);
+}
+
+function prepare_in_working_me_rst_value($d,$i,$s,$c){
+    $std = new stdClass();
+    $std->d_value = (($d-6)/3.02)*1.5+50;
+    $std->i_value = (($i-6)/2.78)*1.5+50;
+    $std->s_value = (($s-6)/3.14)*1.5+50;
+    $std->c_value = (($c-6)/4.16)*1.5+50;
+    return max_min_rst($std);
+}
 //function is_submit($nid,$su_id){
 //    $query = "select count(nid) num from webform_submissions where nid = $nid";
 //    $result = db_query($query)->fetchObject();
@@ -889,7 +960,7 @@ function sum_rst_data($item,&$std){
        case 'S': $std->s++; return $std;
        case 'C': $std->c++; return $std;
    }
-   return $std;
+   return  $std;
 }
 
 function prepare_result($like,$dis_like,$type){
