@@ -39,22 +39,42 @@ function review360_interviewer_survey_submit($key,$nid){
     return $pageContent;
 }
 
+function review360_interviewer_survey_generate_report($user_key,$nid){
+    update_user_exam_status($nid);
+    $query = "select rsue.*,rsu.u_name,rsu.u_company_name,rsu.u_department from review360_survey_user_exam rsue  
+        inner join review360_survey_user rsu on 
+        rsue.s_id = rsu.survey_id and rsue.user_key = rsu.survey_user_key
+        where exam_nid = $nid";
+    $exam = db_query($query)->fetchObject();
+    $exam->rst = generate_survey_result_by_sv($exam);
+    
+    $is_generated = generate_report($exam);
+   
+    if ($is_generated) {
+        echo drupal_json_output(array('status' => 'success'));
+    } else {
+        echo drupal_json_output(array('status' => 'failed'));
+    }
+}
+
 function review360_interviewer_survey_generate_ajax(){
     $user_key = $_POST['user_key'];
     $nid= $_POST['nid'];
+
     $has_result = is_generate_result($nid);
     if($has_result->has_result>0){
         echo drupal_json_output(array('status' => 'already generate report.'));
         return;
     }
-    
+  
     update_user_exam_status($nid);
-    $query = "select rsue.*,rsu.u_name from review360_survey_user_exam rsue  
+    $query = "select rsue.*,rsu.u_name,rsu.u_company_name,rsu.u_department from review360_survey_user_exam rsue  
         inner join review360_survey_user rsu on 
         rsue.s_id = rsu.survey_id and rsue.user_key = rsu.survey_user_key
         where exam_nid = $nid";
     $exam = db_query($query)->fetchObject();
-    generate_survey_result_by_sv($exam);
+    $exam->rst = generate_survey_result_by_sv($exam);
+    
     $is_generated = generate_report($exam);
    
     if ($is_generated) {
