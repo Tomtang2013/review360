@@ -39,6 +39,7 @@ function review360_interviewer_survey_submit($key,$nid){
     return $pageContent;
 }
 
+
 function review360_interviewer_survey_generate_report($user_key,$nid){
     update_user_exam_status($nid);
     $query = "select rsue.*,rsu.u_name,rsu.u_company_name,rsu.u_department from review360_survey_user_exam rsue  
@@ -47,7 +48,7 @@ function review360_interviewer_survey_generate_report($user_key,$nid){
         where exam_nid = $nid";
     $exam = db_query($query)->fetchObject();
     $exam->rst = generate_survey_result_by_sv($exam);
-    
+    $exam->str = generate_survey_rsult_str($exam);
     $is_generated = generate_report($exam);
    
     if ($is_generated) {

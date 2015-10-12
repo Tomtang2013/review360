@@ -24,16 +24,17 @@ class ReportCreator{
 
         $document->setValue('position', iconv('utf-8', 'gbk', $exam->u_department));
         $document->setValue('date', iconv('utf-8', 'gbk', '2015年5月27日'));
+        
         $document->setValue('work', iconv('utf-8', 'gbk', '动态 ==在工作情境中，你希望自己表现出的主要行为风格为D（支配型）。你希望自己可以表现出极高的成就感，好胜且有进取心，精力充沛，敢于挑战，果断自信，善于领导。'));
         $document->setValue('innate', iconv('utf-8', 'gbk', '动态 ==当你处于压力情境下时，你将会表现出自己最真实的动机与欲求，此时，你将会表现出的主要行为风格为D（支配型）、I（影响型）、S（稳健型）。此时，你目标明确，做事耐心坚定，精力充沛，善于交往。'));
-
         $document->setValue('outside', iconv('utf-8', 'gbk', '动态 ==你在平时工作中，最常表现出来的行为风格为D（支配型）。你有着极高的成就感，好胜且有进取心，精力充沛，敢于挑战，果断自信，善于领导。'));
-        $document->setValue('suitable', iconv('utf-8', 'gbk', '动态 ==“角色适应中的我”中需要关注中线上下超过+30%的部分，这反映了你适应的压力。如果D向上转换，可能面临结果与任务的压力；如果I向上转换，可能面临人际交往与开拓的压力；如果S向上转换，可能面临计划、执行与亲和的压力；如果C向上转换，可能面临工作规范、精确的压力。'));
-        $document->setValue('classic', iconv('utf-8', 'gbk', '动态 ==你能量充沛，行为独特，非常追求新挑战与新机遇。有很强的自我力量。喜欢刺激，常常投入到不经深思的冒险中。为了达成目的，你会给人和环境提出要求，会勾画“蓝图”并充满激情地去推进实施。你最怕被受到控制与利用，在压力下可能会显得非常直率而缺乏沟通艺术。'));
-
-        $document->setValue('advantage', iconv('utf-8', 'gbk', '动态 ==直接的，果断的；你具有强大的自我力量，通常是问题的解决者；你是冒险家，动力通常来自于你自身。'));
-        $document->setValue('deficiency', iconv('utf-8', 'gbk', '动态 ==你有强烈的支配行为特征，有时候却可能显得过于武断权威；好争论，或过于盛气凌人；不喜欢常规，喜欢冒险却可能行动过急。'));
-        $document->setValue('work_manifestation', iconv('utf-8', 'gbk', '动态 ==你具有领导与控制的才干，这些都是基于你直接的、高标准要求的天性。比较起需要紧密关系结合的工作情境来说，更适应于结构化的、正式的工作情境。你是非常具有竞争力与自信的人群，在信息缺乏的情势下，仍然能够迅速做出决策并实施计划。在他人看来极度困难的任务，对于你来说却可能“如鱼得水”。'));
+        $document->setValue('suitable', iconv('utf-8', 'gbk', $exam->str->stress_desc->desc));
+       
+        $document->setValue('code', iconv('utf-8', 'gbk', $exam->str->rst_name));
+        $document->setValue('classic', iconv('utf-8', 'gbk', $exam->str->rst_characteristic));
+        $document->setValue('advantage', iconv('utf-8', 'gbk',$exam->str->rst_advantage));
+        $document->setValue('deficiency', iconv('utf-8', 'gbk', $exam->str->rst_insufficient));
+        $document->setValue('work_manifestation', iconv('utf-8', 'gbk', $exam->str->rst_work_performance));
        
         $img1 = new ImageCreater(DEFAULT_IMGPATH.'img1.png',DEFAULT_BGIMG,null);
         $img2 = new ImageCreater(DEFAULT_IMGPATH.'img2.png',DEFAULT_BGIMG,null);

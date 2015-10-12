@@ -805,6 +805,201 @@ function load_survey_user_exam_by_sid_user_key($sid,$user_key){
     return db_query($query)->fetchAll();
 }
 
+function generate_survey_rsult_str($exam){
+    $str = generate_survey_rsult_str_one($exam->rst);
+    $str->stress_desc = generate_stress_rst($exam->rst->stress_value,$exam->u_name);
+   
+    dd($str);
+    return $str;
+}
+
+function generate_survey_rsult_str_one($rst){
+    $code = null;
+    $d = $rst->other_value->d_value > 50? true:false;
+    $i = $rst->other_value->i_value > 50? true:false;
+    $s = $rst->other_value->s_value > 50? true:false;
+    $c = $rst->other_value->c_value > 50? true:false;
+    
+    if($d == true && $i == false && $s == false && $c == false )
+        $code = "D";
+    else if($d == true && $i == true && $s == false && $c == false 
+            && $rst->other_value->d_value > $rst->other_value->i_value)
+        $code = "DI";
+    else if($d == true && $i == true && $s == false && $c == true 
+            && $rst->other_value->d_value > $rst->other_value->i_value
+            && $rst->other_value->i_value > $rst->other_value->c_value)
+        $code = "DIC";
+    else if($d == true && $i == false && $s == true && $c == false 
+            && $rst->other_value->d_value > $rst->other_value->s_value)
+        $code = "DS";
+    else if($d == true && $i == false && $s == false && $c == true 
+            && $rst->other_value->d_value > $rst->other_value->c_value)
+        $code = "DC";
+    else if($d == false && $i == true && $s == false && $c == false )
+        $code = "I";
+    else if($d == true && $i == true && $s == false && $c == false 
+            && $rst->other_value->i_value > $rst->other_value->d_value)
+        $code = "ID";   
+    else if($d == true && $i == true && $s == true && $c == false 
+            && $rst->other_value->i_value > $rst->other_value->d_value
+            && $rst->other_value->d_value > $rst->other_value->s_value)
+        $code = "IDS";   
+    else if($d == true && $i == true && $s == false && $c == true 
+            && $rst->other_value->i_value > $rst->other_value->d_value
+            && $rst->other_value->d_value > $rst->other_value->c_value)
+        $code = "IDC";   
+    else if($d == false && $i == true && $s == true && $c == false 
+            && $rst->other_value->i_value > $rst->other_value->s_value)
+        $code = "IS"; 
+    else if($d == false && $i == true && $s == true && $c == true 
+            && $rst->other_value->i_value > $rst->other_value->s_value
+            && $rst->other_value->s_value > $rst->other_value->c_value)
+        $code = "ISC"; 
+    else if($d == false && $i == true && $s == false && $c == true 
+            && $rst->other_value->i_value > $rst->other_value->c_value)
+        $code = "IC";
+    else if($d == false && $i == false && $s == true && $c == false)
+        $code = "S";
+    else if($d == true && $i == false && $s == true && $c == false
+            && $rst->other_value->s_value > $rst->other_value->d_value)
+        $code = "SD";
+    else if($d == true && $i == false && $s == true && $c == true
+            && $rst->other_value->s_value > $rst->other_value->d_value
+            && $rst->other_value->d_value > $rst->other_value->c_value)
+        $code = "SDC";
+    else if($d == false && $i == true && $s == true && $c == false
+            && $rst->other_value->s_value > $rst->other_value->i_value)
+        $code = "SI";
+    else if($d == false && $i == true && $s == true && $c == true
+            && $rst->other_value->s_value > $rst->other_value->i_value
+            && $rst->other_value->i_value > $rst->other_value->c_value)
+        $code = "SIC";
+    else if($d == false && $i == false && $s == true && $c == true
+            && $rst->other_value->s_value > $rst->other_value->c_value)
+        $code = "SC";
+    else if($d == false && $i == false && $s == false && $c == true)
+        $code = "C";
+    else if($d == true && $i == false && $s == false && $c == true
+             && $rst->other_value->c_value > $rst->other_value->d_value)
+        $code = "CD";
+    else if($d == true && $i == false && $s == true && $c == true
+             && $rst->other_value->c_value > $rst->other_value->d_value
+             && $rst->other_value->d_value > $rst->other_value->s_value)
+        $code = "CDS"; 
+    else if($d == false && $i == true && $s == false && $c == true
+             && $rst->other_value->c_value > $rst->other_value->i_value)
+        $code = "CI";
+    else if($d == false && $i == true && $s == true && $c == true
+             && $rst->other_value->c_value > $rst->other_value->i_value
+             && $rst->other_value->I_value > $rst->other_value->S_value)
+        $code = "CIS";
+    else if($d == false && $i == false && $s == true && $c == true
+             && $rst->other_value->c_value > $rst->other_value->S_value)
+        $code = "CS";
+   
+    $query = "select * from review360_report_str_result   
+        where rst_type = '$code'";
+    $str = db_query($query)->fetchObject();
+
+    return $str;
+}
+
+function generate_stress_rst($stress,$u_name){
+    $str = generate_stress_str($u_name);
+    $rst_str = new stdClass();
+    if(is_out_of_line($stress->d_value) 
+            && is_out_of_line($stress->i_value) 
+            && is_out_of_line($stress->s_value) 
+            && is_out_of_line($stress->c_value)){
+       $rst_str->desc =  $str->desc;
+    } else {
+       $rst_str->desc =  $str->desc.$str->desc_str;
+       if(is_out_of_line($stress->d_value)){
+           if($stress->d_value>0){
+               $rst_str->desc = $rst_str->desc.$str->top->d;
+           } else if($stress->d_value<0){
+               $rst_str->desc = $rst_str->desc.$str->bottom->d;
+           }
+       }
+       if(is_out_of_line($stress->i_value)){
+            if($stress->i_value>0){
+               $rst_str->desc = $rst_str->desc.$str->top->i;
+           } else if($stress->i_value<0){
+               $rst_str->desc = $rst_str->desc.$str->bottom->i;
+           }
+       }
+       if(is_out_of_line($stress->s_value)){
+            if($stress->s_value>0){
+               $rst_str->desc = $rst_str->desc.$str->top->s;
+           } else if($stress->s_value<0){
+               $rst_str->desc = $rst_str->desc.$str->bottom->s;
+           }
+       }
+       if(is_out_of_line($stress->c_value)){
+           if($stress->c_value>0){
+               $rst_str->desc = $rst_str->desc.$str->top->c;
+           } else if($stress->c_value<0){
+               $rst_str->desc = $rst_str->desc.$str->bottom->c;
+           }
+       }
+    }
+    return $rst_str;
+}
+
+
+
+function is_out_of_line($value){
+    if($value > 30 || $value < -30) return true;
+    return false;
+}
+
+function generate_stress_str($u_name){
+    $str = new stdClass();
+    $str->desc = "转换模式图形显示($u_name)的“内在的我”和“外在的我”之间的改变， 并凸显($u_name)正在进行的性格调整。";
+    $str->desc_str = " 
+图形显示,($u_name)的压力为:";
+    $str->top = new stdClass();
+    $str->bottom = new stdClass();
+    $str->top->d = " 
+更有控制力 
+承担更多的责任 
+更果断";
+    $str->top->i =" 
+与人相处沟通上更友善，更善解人意，更敏感 
+更愿意与人沟通
+努力发展更多与人相处之道
+渴望获得认同";
+    $str->top->s =" 
+放慢步调，试图放松
+不像自然本我状态下勇猛精进
+对事方面，希望再设计更中长期的流程
+对人方面，希望使部门和谐，注重人和，降低流动率
+采取轻松和平和的态度";
+    $str->top->c =" 
+对制度或细节多关注
+强调精密与正确
+试图让事务更井井有条或建立制度";
+            
+    $str->bottom->d =" 
+降低强势和权威
+变得较不具控制力，可能试图授权";
+    $str->bottom->i =" 
+多做，少说
+减少社交活动
+(很多案例都反映出人群或某人曾经让他失望，他觉得需要采取保留态度 )";
+    $str->bottom->s =" 
+更能在较少时间内做较多事
+未能赶上某些截止时间，急迫感增加，快上加快 ";
+    $str->bottom->c =" 
+去除或简化部分细节
+思路更开阔
+愿冒更多的险
+更独立自主
+突破传统
+更多授权细节工作";
+    return $str;
+}
+
 function generate_survey_result_by_sv($exam){
     $result = get_survey_rst_by_nid($exam->exam_nid);
   
