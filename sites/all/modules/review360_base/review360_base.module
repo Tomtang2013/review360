@@ -931,10 +931,10 @@ function generate_survey_rsult_str_one($rst){
 function generate_stress_rst($stress,$u_name){
     $str = generate_stress_str($u_name);
     $rst_str = new stdClass();
-    if(is_out_of_line($stress->d_value) 
-            && is_out_of_line($stress->i_value) 
-            && is_out_of_line($stress->s_value) 
-            && is_out_of_line($stress->c_value)){
+    if(!is_out_of_line($stress->d_value) 
+            && !is_out_of_line($stress->i_value) 
+            && !is_out_of_line($stress->s_value) 
+            && !is_out_of_line($stress->c_value)){
        $rst_str->desc =  $str->desc;
     } else {
        $rst_str->desc =  $str->desc.$str->desc_str;
