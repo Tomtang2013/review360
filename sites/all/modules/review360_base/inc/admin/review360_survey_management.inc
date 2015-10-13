@@ -37,6 +37,7 @@ function review360_surveymanagement_generate_report_by_sid($survey_id){
        
         $exam->rst = generate_survey_result_by_sv($exam);
         $exam->str = generate_survey_rsult_str($exam);
+        watchdog("php", $exam->u_name);
         $is_generated = generate_report($exam);
         if ($is_generated) {
             $rst[] = $exam->u_name;
