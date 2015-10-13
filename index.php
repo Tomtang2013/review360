@@ -17,8 +17,8 @@
 define('DRUPAL_ROOT', getcwd());
 
 function dd($data){
-//$file = 'c://wamp//tmp//drupal_debug.txt';
-$file = 'sites//default//files//drupal_debug.txt';
+$file = 'c://wamp//tmp//drupal_debug.txt';
+//$file = 'sites//default//files//drupal_debug.txt';
       ob_start();
       print_r($data);
       $string = ob_get_clean();
