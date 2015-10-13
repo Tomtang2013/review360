@@ -981,47 +981,18 @@ function is_out_of_line($value){
 function generate_stress_str($u_name){
     $str = new stdClass();
     $str->desc = "转换模式图形显示($u_name)的“内在的我”和“外在的我”之间的改变， 并凸显($u_name)正在进行的性格调整。";
-    $str->desc_str = " 
-图形显示,($u_name)的压力为:";
+    $str->desc_str = " 图形显示,($u_name)的压力为:";
     $str->top = new stdClass();
     $str->bottom = new stdClass();
-    $str->top->d = " 
-更有控制力 
-承担更多的责任 
-更果断";
-    $str->top->i =" 
-与人相处沟通上更友善，更善解人意，更敏感 
-更愿意与人沟通
-努力发展更多与人相处之道
-渴望获得认同";
-    $str->top->s =" 
-放慢步调，试图放松
-不像自然本我状态下勇猛精进
-对事方面，希望再设计更中长期的流程
-对人方面，希望使部门和谐，注重人和，降低流动率
-采取轻松和平和的态度";
-    $str->top->c =" 
-对制度或细节多关注
-强调精密与正确
-试图让事务更井井有条或建立制度";
+    $str->top->d =" 更有控制力。承担更多的责任。更果断。";
+    $str->top->i =" 与人相处沟通上更友善，更善解人意，更敏感。更愿意与人沟通。努力发展更多与人相处之道。渴望获得认同。";
+    $str->top->s =" 放慢步调，试图放松。不像自然本我状态下勇猛精进。对事方面，希望再设计更中长期的流程。对人方面，希望使部门和谐，注重人和，降低流动率。采取轻松和平和的态度。";
+    $str->top->c =" 对制度或细节多关注。强调精密与正确。试图让事务更井井有条或建立制度。";
             
-    $str->bottom->d =" 
-降低强势和权威
-变得较不具控制力，可能试图授权";
-    $str->bottom->i =" 
-多做，少说
-减少社交活动
-(很多案例都反映出人群或某人曾经让他失望，他觉得需要采取保留态度 )";
-    $str->bottom->s =" 
-更能在较少时间内做较多事
-未能赶上某些截止时间，急迫感增加，快上加快 ";
-    $str->bottom->c =" 
-去除或简化部分细节
-思路更开阔
-愿冒更多的险
-更独立自主
-突破传统
-更多授权细节工作";
+    $str->bottom->d =" 降低强势和权威。变得较不具控制力，可能试图授权。";
+    $str->bottom->i =" 多做，少说。减少社交活动。(很多案例都反映出人群或某人曾经让他失望，他觉得需要采取保留态度 )。";
+    $str->bottom->s =" 更能在较少时间内做较多事。未能赶上某些截止时间，急迫感增加，快上加快。";
+    $str->bottom->c =" 去除或简化部分细节。思路更开阔。愿冒更多的险。更独立自主。突破传统。更多授权细节工作。";
     return $str;
 }
 
@@ -1065,6 +1036,7 @@ function insert_user_survey_result($rst,$sid,$survey_exam_id,$nid,$value,$quadra
     $field_array['c_value'] = $value->c_value;
     $field_array['update_date'] = time();
     $field_array['create_date'] = time();
+
     $rst = db_insert('review360_survey_exam_result')->fields($field_array)->execute();
 }
 
@@ -1087,7 +1059,7 @@ function max_min_rst(&$std){
 function max_min_value($value){
     if($value > 95) return 95;
     if($value < 5) return 5;
-    return floor($value);
+    return number_format($value,3);
 }
 
 function prepare_stress_rst_value($out,$inner){

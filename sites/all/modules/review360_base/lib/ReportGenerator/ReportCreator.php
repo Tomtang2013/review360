@@ -67,6 +67,13 @@ class ReportCreator{
     //        $doc = str_replace('w:val="A2A2A2"', 'w:val="ee82ee"', $doc);//I
     //        $doc = str_replace('w:val="A3A3A3"', 'w:val="98fb98"', $doc);//c
     //        $doc = str_replace('w:val="A4A4A4"', 'w:val="a0522d"', $doc);//s
+            
+//            $linestart_xml = '<w:p w:rsidR="000830E6" w:rsidRDefault="000830E6" w:rsidP="00E92FA9"><w:pPr><w:spacing w:line="300" w:lineRule="auto"/><w:rPr><w:rFonts w:ascii="Microsoft YaHei" w:eastAsia="Microsoft YaHei" w:hAnsi="Microsoft YaHei" w:cs="SimSun"/><w:sz w:val="20"/></w:rPr></w:pPr><w:r w:rsidRPr="000830E6"><w:rPr><w:rFonts w:ascii="Microsoft YaHei" w:eastAsia="Microsoft YaHei" w:hAnsi="Microsoft YaHei" w:cs="SimSun" w:hint="eastAsia"/><w:sz w:val="20"/></w:rPr><w:t>';
+//            $lineend_xml = '</w:t></w:r></w:p>';
+//
+//            $doc = str_replace('#lineStart', $linestart_xml, $doc);
+//            $doc = str_replace('#lineEnd', $lineend_xml, $doc);
+            
             $doc = str_replace('w:themeColor="background2"', '', $doc);
 
             $document->set_documentXML($doc);
