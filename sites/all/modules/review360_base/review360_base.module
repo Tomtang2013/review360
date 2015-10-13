@@ -829,7 +829,8 @@ function generate_survey_high_light($rst){
     sort($data);
   
     $max = $data[3];
-
+dd($data);
+dd($max);
     if($max == $d) return "d";
     if($max == $i) return "i";
     if($max == $s) return "s";
