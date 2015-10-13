@@ -808,9 +808,25 @@ function load_survey_user_exam_by_sid_user_key($sid,$user_key){
 function generate_survey_rsult_str($exam){
     $str = generate_survey_rsult_str_one($exam->rst);
     $str->stress_desc = generate_stress_rst($exam->rst->stress_value,$exam->u_name);
-   
-    dd($str);
+    $str->high_light = generate_survey_high_light($exam->rst);
     return $str;
+}
+
+function generate_survey_high_light($rst){
+    $d = $rst->other_value->d_value;
+    $s = $rst->other_value->i_value;
+    $i = $rst->other_value->s_value;
+    $c = $rst->other_value->c_value;
+    $data = array($d,$i,$s,$c);
+    sort($data);
+  
+    $max = $data[3];
+
+    if($max == $d) return "d";
+    if($max == $i) return "i";
+    if($max == $s) return "s";
+    if($max == $c) return "c";
+    
 }
 
 function generate_survey_rsult_str_one($rst){
