@@ -75,7 +75,7 @@ function review360_interviewer_survey_generate_ajax(){
         where exam_nid = $nid";
     $exam = db_query($query)->fetchObject();
     $exam->rst = generate_survey_result_by_sv($exam);
-    
+    $exam->str = generate_survey_rsult_str($exam);
     $is_generated = generate_report($exam);
    
     if ($is_generated) {
