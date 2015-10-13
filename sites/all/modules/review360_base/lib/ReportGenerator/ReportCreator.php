@@ -53,7 +53,7 @@ class ReportCreator{
         $document->save_image('image7.jpeg',DEFAULT_IMGPATH.'img4.png',$document);
 //        $document->save_image('image11.jpeg',DEFAULT_IMGPATH.'img4.png',$document);
 
-       
+        dd($exam->str->high_light);
         if($exam->str->high_light == 'd'){
             $doc = str_replace('w:val="A1A1A1"', 'w:val="000000"', $document->documentXML()); //D
         } else if($exam->str->high_light == 'i'){
