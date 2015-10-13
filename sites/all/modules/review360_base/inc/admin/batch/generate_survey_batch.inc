@@ -3,11 +3,11 @@
 defined('DEFAULT_WORDTEMPLATE') or define('DEFAULT_WORDTEMPLATE', 'sites/default/files/generateFiles/DiscTemp.docx');
 defined('DEFAULT_WORDPATH') or define('DEFAULT_WORDPATH', 'sites/default/files/generateFiles/');
 
-
-
 function generate_survey_user_report_do_batch($exam,&$context){
+    dd("-============");
     if($exam->is_generate_result == 0){
-        generate_survey_result_by_sv($exam);
+       $exam->rst = generate_survey_result_by_sv($exam);
+       $exam->str = generate_survey_rsult_str($exam);
     }
     
     $review_folder = DEFAULT_WORDPATH . $exam->s_id;

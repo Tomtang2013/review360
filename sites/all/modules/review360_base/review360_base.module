@@ -201,6 +201,14 @@ function review360_base_menu() {
         'weight'            => -47,
     );
     
+     $items['surveymanagement/generatereportbysid/%'] = array(
+        'title' => t('生成结果'),
+        'page callback'     => 'review360_surveymanagement_generate_report_by_sid',
+        'access arguments'  => array('review360_base'),
+        'file'              => 'inc/admin/review360_survey_management.inc',
+        'page arguments' => array(2),
+        'weight'            => -47,
+    );
     // EXAM ===============================
     $items['exammanagement'] = array(
         'title' => t('问卷管理'),
@@ -351,12 +359,12 @@ function review360_base_menu() {
      $items['interviewer/survey/generate/%/%'] = array(
         'title' => t('生成结果'),
         'page callback'     => 'review360_interviewer_survey_generate_report',
-        'access arguments'  => array('review360_base_interviewer'),
+        'access arguments'  => array('review360_base'),
         'file'              => 'inc/member/review360_interviewer_survey.inc',
         'page arguments' => array(3,4),
         'weight'            => -47,
     );
-
+     
     $items['interviewer/reportdl/%/%'] = array(
         'title' => t('下载报告'),
         'page callback'     => 'review360_interviewer_survey_report_download',
@@ -1017,6 +1025,7 @@ function generate_stress_str($u_name){
 }
 
 function generate_survey_result_by_sv($exam){
+   
     $result = get_survey_rst_by_nid($exam->exam_nid);
   
     $in_working_me = prepare_rst_value("in_working_me",$result->in_working_me->d,$result->in_working_me->i,$result->in_working_me->s,$result->in_working_me->c);
@@ -1316,4 +1325,25 @@ function folderToZip($folder, &$zipFile, $subfolder = null) {
 function is_generate_result($nid){
     $query = "select count(nid)>0 as has_result from review360_survey_exam_result where nid=$nid";
     return db_query($query)->fetchObject();
+}
+
+function generate_report($exam){
+    require_once drupal_get_path('module', 'review360_base') . '/lib/ReportGenerator/ReportCreator.php';
+    $review_folder = DEFAULT_WORDPATH . $exam->s_id;
+    $zip_is_exist = file_exists($review_folder);
+    if(!$zip_is_exist){
+        create_review_report_folder($review_folder);
+    }
+    $report =new ReportCreator(DEFAULT_WORDTEMPLATE,$review_folder);
+    $path = $report->generate_report($exam);
+    $zip_path = DEFAULT_WORDPATH . $exam->s_id.".zip";
+    $zip_path = drupal_realpath($zip_path);
+    del_old_zip_file($zip_path);
+    return file_exists($path);
+}
+
+function create_review_report_folder($dirname) {
+    dirname($dirname);
+    mkdir($dirname, 0777, true);
+    return $dirname;
 }

@@ -25,6 +25,28 @@ function  review360_survey_export($survey_id){
     export_user_key($survey,$fileName);
 }
 
+function review360_surveymanagement_generate_report_by_sid($survey_id){
+    $rst = array();
+    $query = "select rsue.*,rsu.u_name,rsu.u_company_name,rsu.u_department from review360_survey_user_exam rsue  
+        inner join review360_survey_user rsu on 
+        rsue.s_id = rsu.survey_id and rsue.user_key = rsu.survey_user_key
+        where rsue.s_id = $survey_id and rsue.is_submited = 1";
+    $exams = db_query($query)->fetchAll();
+  
+    foreach ($exams as $exam) {  
+       
+        $exam->rst = generate_survey_result_by_sv($exam);
+        $exam->str = generate_survey_rsult_str($exam);
+        $is_generated = generate_report($exam);
+        if ($is_generated) {
+            $rst[] = $exam->u_name;
+        }
+    }
+    
+    echo drupal_json_output(array('status' => 'success','doc_list'=>$rst));
+    
+}
+
 function review_survey_report_generate($survey_id){
     $query = "select *  from review360_survey_user_exam where s_id = $survey_id and is_submited = 1";
     $exams = db_query($query)->fetchAll();
