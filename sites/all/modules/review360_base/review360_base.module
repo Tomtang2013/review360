@@ -915,10 +915,10 @@ function generate_survey_rsult_str_one($rst){
         $code = "CI";
     else if($d == false && $i == true && $s == true && $c == true
              && $rst->other_value->c_value > $rst->other_value->i_value
-             && $rst->other_value->I_value > $rst->other_value->S_value)
+             && $rst->other_value->I_value > $rst->other_value->s_value)
         $code = "CIS";
     else if($d == false && $i == false && $s == true && $c == true
-             && $rst->other_value->c_value >= $rst->other_value->S_value)
+             && $rst->other_value->c_value >= $rst->other_value->s_value)
         $code = "CS";
 
     $query = "select * from review360_report_str_result   
