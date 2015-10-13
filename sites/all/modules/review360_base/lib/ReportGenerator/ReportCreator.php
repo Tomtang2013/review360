@@ -21,7 +21,7 @@ class ReportCreator{
         $document = $PHPWord->loadTemplate($this->_filePath);
 
 //        $document->setValue('company_name', iconv('utf-8', 'gbk', $exam->u_company_name));
-        $document->setValue('user_name', iconv('utf-8', 'gbk', $exam->u_name));
+        $document->setValue('name', iconv('utf-8', 'gbk', $exam->u_name));
 
 //        $document->setValue('position', iconv('utf-8', 'gbk', $exam->u_department));
         $document->setValue('date', iconv('utf-8', 'gbk', date('Y年m月d日',$exam->update_date)));
@@ -47,10 +47,11 @@ class ReportCreator{
         $img3->generate_image($exam->rst->other_value,true);
         $img4->generate_image($exam->rst->stress_value,false);
 
-        $document->save_image('image5.jpeg',DEFAULT_IMGPATH.'img1.png',$document);
-        $document->save_image('image6.jpeg',DEFAULT_IMGPATH.'img2.png',$document);
-        $document->save_image('image7.jpeg',DEFAULT_IMGPATH.'img3.png',$document);
-        $document->save_image('image8.jpeg',DEFAULT_IMGPATH.'img4.png',$document);
+        $document->save_image('image4.jpeg',DEFAULT_IMGPATH.'img1.png',$document);
+        $document->save_image('image5.jpeg',DEFAULT_IMGPATH.'img2.png',$document);
+        $document->save_image('image6.jpeg',DEFAULT_IMGPATH.'img3.png',$document);
+        $document->save_image('image7.jpeg',DEFAULT_IMGPATH.'img4.png',$document);
+//        $document->save_image('image11.jpeg',DEFAULT_IMGPATH.'img4.png',$document);
 
        
         if($exam->str->high_light == 'd'){
