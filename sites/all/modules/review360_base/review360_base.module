@@ -822,15 +822,14 @@ function generate_survey_rsult_str($exam){
 
 function generate_survey_high_light($rst){
     $d = $rst->other_value->d_value;
-    $s = $rst->other_value->i_value;
-    $i = $rst->other_value->s_value;
+    $i = $rst->other_value->i_value;
+    $s = $rst->other_value->s_value;
     $c = $rst->other_value->c_value;
     $data = array($d,$i,$s,$c);
     sort($data);
   
     $max = $data[3];
-dd($data);
-dd($max);
+
     if($max == $d) return "d";
     if($max == $i) return "i";
     if($max == $s) return "s";
