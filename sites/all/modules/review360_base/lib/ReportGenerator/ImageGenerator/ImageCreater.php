@@ -11,8 +11,16 @@ class ImageCreater {
     private $c_x_offset = 265;
     private $top_100_y_offset = 5;
     private $bottom_0_y_offset = 350;
-    private $middle_50_bottom_y_offset = 180;
-    private $middle_50_top_y_offset = 170;
+//    private $middle_50_bottom_y_offset = 180;
+    
+    
+    private $bar_d_x_offset = 80;
+    private $bar_i_x_offset = 145;
+    private $bar_s_x_offset = 210;
+    private $bar_c_x_offset = 275;
+    private $middle_50_y_offset = 133;
+    private $bar_top_100_y_offset = 13;
+    private $bar_bottom_0_y_offset = 252;
     private $_imageName;
     private $_background;
     private $_data;
@@ -27,6 +35,11 @@ class ImageCreater {
         $rate = ($this->bottom_0_y_offset - $this->top_100_y_offset) / 100;
         return floor((100 - $value) * $rate);
     }
+    
+    private function calculate_bar_value($value) {
+        $rate = ($this->bar_bottom_0_y_offset - $this->bar_top_100_y_offset) / 200;
+        return $this->middle_50_y_offset -  floor(($value) * $rate);
+    }
 
     public function generate_image($values, $is_line) {
         if ($is_line) {
@@ -38,17 +51,17 @@ class ImageCreater {
 
     private function render_image_bar($values) {
         $image = imagecreatefromjpeg($this->_background);
-
-        $d = $this->calculate_value($values->d_value + 50);
-        $i = $this->calculate_value($values->i_value + 50);
-        $s = $this->calculate_value($values->s_value + 50);
-        $c = $this->calculate_value($values->c_value + 50);
-
-        $white_color = imagecolorallocate($image, 255, 255, 255);
-        imagefilledrectangle($image, $this->d_x_offset - $this->bar_width, $this->middle_50_y_offset, $this->d_x_offset + $this->bar_width, $d, $white_color);
-        imagefilledrectangle($image, $this->i_x_offset - $this->bar_width, $this->middle_50_y_offset, $this->i_x_offset + $this->bar_width, $i, $white_color);
-        imagefilledrectangle($image, $this->s_x_offset - $this->bar_width, $this->middle_50_y_offset, $this->s_x_offset + $this->bar_width, $s, $white_color);
-        imagefilledrectangle($image, $this->c_x_offset - $this->bar_width, $this->middle_50_y_offset, $this->c_x_offset + $this->bar_width, $c, $white_color);
+        $d = $this->calculate_bar_value($values->d_value);
+        $i = $this->calculate_bar_value($values->i_value);
+        $s = $this->calculate_bar_value($values->s_value);
+        $c = $this->calculate_bar_value($values->c_value);
+        
+        $white_color = imagecolorallocate($image, 0, 0, 0);
+//        imagefilledrectangle($image, $this->bar_d_x_offset - $this->bar_width, $this->bar_top_100_y_offset, $this->bar_d_x_offset + $this->bar_width, $this->bar_bottom_0_y_offset, $white_color);
+        imagefilledrectangle($image, $this->bar_d_x_offset - $this->bar_width, $this->middle_50_y_offset, $this->bar_d_x_offset + $this->bar_width, $d, $white_color);
+        imagefilledrectangle($image, $this->bar_i_x_offset - $this->bar_width, $this->middle_50_y_offset, $this->bar_i_x_offset + $this->bar_width, $i, $white_color);
+        imagefilledrectangle($image, $this->bar_s_x_offset - $this->bar_width, $this->middle_50_y_offset, $this->bar_s_x_offset + $this->bar_width, $s, $white_color);
+        imagefilledrectangle($image, $this->bar_c_x_offset - $this->bar_width, $this->middle_50_y_offset, $this->bar_c_x_offset + $this->bar_width, $c, $white_color);
 
         ob_clean();
         flush();

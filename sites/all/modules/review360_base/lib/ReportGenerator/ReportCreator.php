@@ -1,6 +1,7 @@
 ﻿<?php
 //defined('DEFAULT_IMGPATH') or define('DEFAULT_IMGPATH', 'sites/default/files/generateFiles/Images/');
 defined('DEFAULT_BGIMG') or define('DEFAULT_BGIMG', 'sites/default/files/generateFiles/Images/backgd.jpg');
+defined('DEFAULT_BARIMG') or define('DEFAULT_BARIMG', 'sites/default/files/generateFiles/Images/backBar.jpg');
 defined('DEFAULT_IMGPATH') or define('DEFAULT_IMGPATH', 'sites/default/files/generateFiles/Images/');
 //defined('DEFAULT_WORDPATH') or define('DEFAULT_WORDPATH', 'sites/default/files/generateFiles/');
 
@@ -40,7 +41,7 @@ class ReportCreator{
             $img1 = new ImageCreater(DEFAULT_IMGPATH.'img1.png',DEFAULT_BGIMG,null);
             $img2 = new ImageCreater(DEFAULT_IMGPATH.'img2.png',DEFAULT_BGIMG,null);
             $img3 = new ImageCreater(DEFAULT_IMGPATH.'img3.png',DEFAULT_BGIMG,null);
-            $img4 = new ImageCreater(DEFAULT_IMGPATH.'img4.png',DEFAULT_BGIMG,null);
+            $img4 = new ImageCreater(DEFAULT_IMGPATH.'img4.png',DEFAULT_BARIMG,null);
 
             $img1->generate_image($exam->rst->in_working_me_value,true);
             $img2->generate_image($exam->rst->innate_value,true);
