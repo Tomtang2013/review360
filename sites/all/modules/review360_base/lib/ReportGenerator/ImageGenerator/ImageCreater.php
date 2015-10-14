@@ -11,7 +11,8 @@ class ImageCreater {
     private $c_x_offset = 265;
     private $top_100_y_offset = 5;
     private $bottom_0_y_offset = 350;
-    private $middle_50_y_offset = 180;
+    private $middle_50_bottom_y_offset = 180;
+    private $middle_50_top_y_offset = 170;
     private $_imageName;
     private $_background;
     private $_data;
