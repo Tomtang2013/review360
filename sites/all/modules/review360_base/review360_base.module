@@ -843,15 +843,27 @@ function generate_survey_rsult_str_one($rst){
     $i = $rst->other_value->i_value > 50? true:false;
     $s = $rst->other_value->s_value > 50? true:false;
     $c = $rst->other_value->c_value > 50? true:false;
-      
+//    dd($rst->other_value);
+//    dd($d);  
+//    dd($i); 
+//    dd($s); 
+//    dd($c); 
     if($d == true && $i == false && $s == false && $c == false )
         $code = "D";
     else if($d == true && $i == true && $s == false && $c == false 
             && $rst->other_value->d_value >= $rst->other_value->i_value)
         $code = "DI";
+    else if($d == true && $i == true && $s == true && $c == false 
+            && (($rst->other_value->d_value > $rst->other_value->i_value
+                && $rst->other_value->i_value > $rst->other_value->s_value) 
+            || ($rst->other_value->d_value > $rst->other_value->s_value
+                && $rst->other_value->s_value > $rst->other_value->i_value)))
+        $code = "DIS";
     else if($d == true && $i == true && $s == false && $c == true 
-            && $rst->other_value->d_value > $rst->other_value->i_value
-            && $rst->other_value->i_value > $rst->other_value->c_value)
+            && (($rst->other_value->d_value > $rst->other_value->i_value
+                && $rst->other_value->i_value > $rst->other_value->c_value) 
+            || ($rst->other_value->d_value > $rst->other_value->c_value
+                && $rst->other_value->c_value > $rst->other_value->i_value)))
         $code = "DIC";
     else if($d == true && $i == false && $s == true && $c == false 
             && $rst->other_value->d_value >= $rst->other_value->s_value)
@@ -865,19 +877,25 @@ function generate_survey_rsult_str_one($rst){
             && $rst->other_value->i_value > $rst->other_value->d_value)
         $code = "ID";   
     else if($d == true && $i == true && $s == true && $c == false 
-            && $rst->other_value->i_value > $rst->other_value->d_value
-            && $rst->other_value->d_value > $rst->other_value->s_value)
+            && (($rst->other_value->i_value > $rst->other_value->d_value
+                && $rst->other_value->d_value > $rst->other_value->s_value) 
+            || ($rst->other_value->i_value > $rst->other_value->s_value
+                && $rst->other_value->s_value > $rst->other_value->d_value)))
         $code = "IDS";   
     else if($d == true && $i == true && $s == false && $c == true 
-            && $rst->other_value->i_value > $rst->other_value->d_value
-            && $rst->other_value->d_value > $rst->other_value->c_value)
+            && (($rst->other_value->i_value > $rst->other_value->d_value
+                && $rst->other_value->d_value > $rst->other_value->c_value) 
+            || ($rst->other_value->i_value > $rst->other_value->c_value
+                && $rst->other_value->c_value > $rst->other_value->d_value)))
         $code = "IDC";   
     else if($d == false && $i == true && $s == true && $c == false 
             && $rst->other_value->i_value >= $rst->other_value->s_value)
         $code = "IS"; 
     else if($d == false && $i == true && $s == true && $c == true 
-            && $rst->other_value->i_value > $rst->other_value->s_value
-            && $rst->other_value->s_value > $rst->other_value->c_value)
+            && (($rst->other_value->i_value > $rst->other_value->s_value
+                && $rst->other_value->s_value > $rst->other_value->c_value) 
+            || ($rst->other_value->i_value > $rst->other_value->c_value
+                && $rst->other_value->c_value > $rst->other_value->s_value)))
         $code = "ISC"; 
     else if($d == false && $i == true && $s == false && $c == true 
             && $rst->other_value->i_value >= $rst->other_value->c_value)
@@ -888,15 +906,19 @@ function generate_survey_rsult_str_one($rst){
             && $rst->other_value->s_value >= $rst->other_value->d_value)
         $code = "SD";
     else if($d == true && $i == false && $s == true && $c == true
-            && $rst->other_value->s_value > $rst->other_value->d_value
-            && $rst->other_value->d_value > $rst->other_value->c_value)
+            && (($rst->other_value->s_value > $rst->other_value->d_value
+                && $rst->other_value->d_value > $rst->other_value->c_value) 
+            || ($rst->other_value->s_value > $rst->other_value->c_value
+                && $rst->other_value->c_value > $rst->other_value->d_value)))
         $code = "SDC";
     else if($d == false && $i == true && $s == true && $c == false
             && $rst->other_value->s_value >= $rst->other_value->i_value)
         $code = "SI";
     else if($d == false && $i == true && $s == true && $c == true
-            && $rst->other_value->s_value > $rst->other_value->i_value
-            && $rst->other_value->i_value > $rst->other_value->c_value)
+            && (($rst->other_value->s_value > $rst->other_value->i_value
+                && $rst->other_value->i_value > $rst->other_value->c_value) 
+            || ($rst->other_value->s_value > $rst->other_value->c_value
+                && $rst->other_value->c_value > $rst->other_value->i_value)))
         $code = "SIC";
     else if($d == false && $i == false && $s == true && $c == true
             && $rst->other_value->s_value >= $rst->other_value->c_value)
@@ -907,15 +929,19 @@ function generate_survey_rsult_str_one($rst){
              && $rst->other_value->c_value > $rst->other_value->d_value)
         $code = "CD";
     else if($d == true && $i == false && $s == true && $c == true
-             && $rst->other_value->c_value > $rst->other_value->d_value
-             && $rst->other_value->d_value > $rst->other_value->s_value)
+             && (($rst->other_value->c_value > $rst->other_value->d_value
+                && $rst->other_value->d_value > $rst->other_value->s_value) 
+            || ($rst->other_value->c_value > $rst->other_value->s_value
+                && $rst->other_value->s_value > $rst->other_value->d_value)))
         $code = "CDS"; 
     else if($d == false && $i == true && $s == false && $c == true
              && $rst->other_value->c_value >= $rst->other_value->i_value)
         $code = "CI";
     else if($d == false && $i == true && $s == true && $c == true
-             && $rst->other_value->c_value > $rst->other_value->i_value
-             && $rst->other_value->I_value > $rst->other_value->s_value)
+             && (($rst->other_value->c_value > $rst->other_value->i_value
+                && $rst->other_value->i_value > $rst->other_value->s_value) 
+            || ($rst->other_value->c_value > $rst->other_value->s_value
+                && $rst->other_value->s_value > $rst->other_value->i_value)))
         $code = "CIS";
     else if($d == false && $i == false && $s == true && $c == true
              && $rst->other_value->c_value >= $rst->other_value->s_value)
