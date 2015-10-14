@@ -81,6 +81,7 @@ class ReportCreator{
             $file_name = $this->_outPutPath."/report_".$pix.".doc";
             $file_name = iconv('utf-8','gbk',$file_name); 
             $document->save($file_name);
+            
             return $file_name;
         } catch (Exception $ex) {
             dd($exam->u_name);

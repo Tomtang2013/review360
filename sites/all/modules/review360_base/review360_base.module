@@ -1001,8 +1001,8 @@ function generate_survey_result_by_sv($exam){
     $result = get_survey_rst_by_nid($exam->exam_nid);
   
     $in_working_me = prepare_rst_value("in_working_me",$result->in_working_me->d,$result->in_working_me->i,$result->in_working_me->s,$result->in_working_me->c);
-    $innate = prepare_rst_value("innate",$result->in_working_me->d,$result->in_working_me->i,$result->in_working_me->s,$result->in_working_me->c);
-    $other = prepare_rst_value("other",$result->in_working_me->d,$result->in_working_me->i,$result->in_working_me->s,$result->in_working_me->c);
+    $innate = prepare_rst_value("innate",$result->innate->d,$result->innate->i,$result->innate->s,$result->innate->c);
+    $other = prepare_rst_value("other",$result->other->d,$result->other->i,$result->other->s,$result->other->c);
     $stress = prepare_stress_rst_value($in_working_me,$innate);
     
     insert_user_survey_result($result->in_working_me,$exam->s_id,$exam->se_id,$exam->exam_nid,$in_working_me,"in_working_me");
@@ -1083,6 +1083,7 @@ function prepare_other_rst_value($d,$i,$s,$c){
 
 function prepare_innate_rst_value($d,$i,$s,$c){
     $std = new stdClass();
+ 
     $std->d_value = ($d/2.43)*15+50;
     $std->i_value = ($i/2.72)*15+50;
     $std->s_value = ($s/2.07)*15+50;
