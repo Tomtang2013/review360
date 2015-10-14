@@ -14,7 +14,7 @@ class ImageCreater {
 //    private $middle_50_bottom_y_offset = 180;
     
     
-    private $bar_d_x_offset = 80;
+    private $bar_d_x_offset = 82;
     private $bar_i_x_offset = 145;
     private $bar_s_x_offset = 210;
     private $bar_c_x_offset = 275;
