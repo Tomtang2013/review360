@@ -49,6 +49,13 @@ class ImageCreater {
         }
     }
 
+    private function text_y($value,$pix){
+        if($value > 0){
+            return $pix - 20;
+        }
+        return $pix + 20;
+    }
+    
     private function render_image_bar($values) {
         $image = imagecreatefromjpeg($this->_background);
         $d = $this->calculate_bar_value($values->d_value);
@@ -62,7 +69,11 @@ class ImageCreater {
         imagefilledrectangle($image, $this->bar_i_x_offset - $this->bar_width, $this->middle_50_y_offset, $this->bar_i_x_offset + $this->bar_width, $i, $white_color);
         imagefilledrectangle($image, $this->bar_s_x_offset - $this->bar_width, $this->middle_50_y_offset, $this->bar_s_x_offset + $this->bar_width, $s, $white_color);
         imagefilledrectangle($image, $this->bar_c_x_offset - $this->bar_width, $this->middle_50_y_offset, $this->bar_c_x_offset + $this->bar_width, $c, $white_color);
-
+        
+        imagestring($image, 3,$this->bar_d_x_offset - 8, $this->text_y($values->d_value,$d),   floor($values->d_value), $white_color);
+        imagestring($image, 3,$this->bar_i_x_offset - 8, $this->text_y($values->i_value,$i),   floor($values->i_value), $white_color);
+        imagestring($image, 3,$this->bar_s_x_offset - 8, $this->text_y($values->s_value,$s),   floor($values->s_value), $white_color);
+        imagestring($image, 3,$this->bar_c_x_offset - 8, $this->text_y($values->c_value,$c),   floor($values->c_value), $white_color);
         ob_clean();
         flush();
 
