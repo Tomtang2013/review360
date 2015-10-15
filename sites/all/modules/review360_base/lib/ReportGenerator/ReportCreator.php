@@ -51,7 +51,7 @@ class ReportCreator{
             $document->save_image('image4.jpeg',DEFAULT_IMGPATH.'img1.png',$document);
             $document->save_image('image5.jpeg',DEFAULT_IMGPATH.'img2.png',$document);
             $document->save_image('image6.jpeg',DEFAULT_IMGPATH.'img3.png',$document);
-            $document->save_image('image7.jpeg',DEFAULT_IMGPATH.'img4.png',$document);
+            $document->save_image('image7.png',DEFAULT_IMGPATH.'img4.png',$document);
     //        $document->save_image('image11.jpeg',DEFAULT_IMGPATH.'img4.png',$document);
 
 
