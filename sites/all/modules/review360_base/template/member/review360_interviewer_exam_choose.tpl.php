@@ -77,7 +77,7 @@
                              type="submit"> 
                             <a class="btn btn-success " 
                                 id="edit-exam-name-btn" 
-                                href="<?php  print "#";//$report_url;?>"
+                                href="<?php  print $report_url;?>"
                                 >下载报告</a>
                         </div>
                      <?php endif;?>
