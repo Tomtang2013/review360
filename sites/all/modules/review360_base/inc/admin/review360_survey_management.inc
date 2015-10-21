@@ -107,14 +107,39 @@ function get_survey_excel_result($survey){
                 $export_rst = $exam;
             }
         }
+        
+        $export_rst = init_exam_rst($export_rst);
+        
         foreach($value->rst as $result){
            switch_stdclass($result,$export_rst);
         }    
         $export_rst->nick_name = $value->nick_name;
         $export_rst->exam_id = $key;
+        
         $export_rsts[] = $export_rst;
     }
+
     return $export_rsts;
+}
+
+function init_exam_rst(&$exam){
+    $exam->working_d = 0;
+    $exam->working_i = 0;
+    $exam->working_s = 0;
+    $exam->working_c = 0;
+    $exam->innate_d = 0;
+    $exam->innate_i = 0;
+    $exam->innate_s =  0;
+    $exam->innate_c =  0;
+    $exam->other_d =  0;
+    $exam->other_i = 0;
+    $exam->other_s =  0;
+    $exam->other_c =  0;
+    $exam->stress_d =  0;
+    $exam->stress_i = 0;
+    $exam->stress_s =  0;
+    $exam->stress_c = 0;
+    return $exam;
 }
 
 function switch_stdclass($value,&$rst){
@@ -169,6 +194,7 @@ function export_excel_result_filter($full_result){
         $new->u_p_number = $r->u_p_number;
         $new->u_email = $r->u_email;
         $new->u_company_name = $r->u_company_name;
+        
         $new->working_d = $r->working_d;
         $new->working_i = $r->working_i;
         $new->working_s = $r->working_s;
@@ -185,14 +211,44 @@ function export_excel_result_filter($full_result){
         $new->stress_i = $r->stress_i;
         $new->stress_s = $r->stress_s;
         $new->stress_c = $r->stress_c;
+        
+        $new = prepare_rst_std_value($new);
         $rst[] = $new;
     }
+    
     return $rst;
+}
+
+function prepare_rst_std_value(&$result){
+    $in_working_me = prepare_rst_value("in_working_me",$result->working_d,$result->working_i,$result->working_s,$result->working_c);
+    $innate = prepare_rst_value("innate",$result->innate_d,$result->innate_i,$result->innate_s,$result->innate_c);
+    $other = prepare_rst_value("other",$result->other_d,$result->other_i,$result->other_s,$result->other_c);
+    $stress = prepare_stress_rst_value($in_working_me,$innate);
+    if($result->working_d!=0 && $result->working_i!=0 && $result->working_s!=0 && $result->working_c!=0 ){
+        $result->working_d = $in_working_me->d_value;
+        $result->working_i = $in_working_me->i_value;
+        $result->working_s = $in_working_me->s_value;
+        $result->working_c = $in_working_me->c_value;
+        $result->innate_d = $innate->d_value;
+        $result->innate_i = $innate->i_value;
+        $result->innate_s = $innate->s_value;
+        $result->innate_c = $innate->c_value;
+        $result->other_d = $other->d_value;
+        $result->other_i = $other->i_value;
+        $result->other_s = $other->s_value;
+        $result->other_c = $other->c_value;
+        $result->stress_d = $stress->d_value;
+        $result->stress_i = $stress->i_value;
+        $result->stress_s = $stress->s_value;
+        $result->stress_c = $stress->c_value;
+    }
+    return $result;
 }
 
 function export_survey_excel_report($survey,$fileName){
     $temp = get_survey_excel_result($survey);
     $results = export_excel_result_filter($temp);
+
     $headArr = array( "姓名", "通行证","性别","年龄","电话","电子邮箱","公司","D","I","S","C","D","I","S","C","D","I","S","C","D","I","S","C");
     $objPHPExcel = new PHPExcel();
     $key = ord("A");

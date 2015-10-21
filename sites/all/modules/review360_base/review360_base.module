@@ -757,7 +757,7 @@ function get_survey_result_by_sid( $exams,$sid){
     }
 
     $survey_exams = get_survey_rst_from_db_by_sid($sid);
-   
+
     foreach($survey_exams as $survey_exam){
         $nid = $survey_exam->nid;
         $result->$nid->rst[] =  $survey_exam;

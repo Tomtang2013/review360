@@ -12,10 +12,10 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/wamp/www/review360/sites/all/modules/review360_base/lib/ReportGenerator/ImageGenerator/ImageCreater.php</file>
             <file>file:/C:/wamp/www/review360/sites/all/modules/review360_base/lib/ReportGenerator/ReportCreator.php</file>
             <file>file:/C:/wamp/www/review360/sites/all/modules/review360_base/inc/member/review360_interviewer_survey.inc</file>
             <file>file:/C:/wamp/www/review360/index.php</file>
+            <file>file:/C:/wamp/www/review360/sites/all/modules/review360_base/template/member/review360_interviewer_exam_choose.tpl.php</file>
             <file>file:/C:/wamp/www/review360/sites/all/modules/review360_base/review360_base.module</file>
         </group>
     </open-files>
