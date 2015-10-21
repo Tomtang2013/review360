@@ -224,7 +224,7 @@ function prepare_rst_std_value(&$result){
     $innate = prepare_rst_value("innate",$result->innate_d,$result->innate_i,$result->innate_s,$result->innate_c);
     $other = prepare_rst_value("other",$result->other_d,$result->other_i,$result->other_s,$result->other_c);
     $stress = prepare_stress_rst_value($in_working_me,$innate);
-    if($result->working_d!=0 && $result->working_i!=0 && $result->working_s!=0 && $result->working_c!=0 ){
+    if($result->working_d!=0 || $result->working_i!=0 || $result->working_s!=0 || $result->working_c!=0 ){
         $result->working_d = $in_working_me->d_value;
         $result->working_i = $in_working_me->i_value;
         $result->working_s = $in_working_me->s_value;
