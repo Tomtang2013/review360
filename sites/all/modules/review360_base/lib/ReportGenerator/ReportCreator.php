@@ -27,9 +27,9 @@ class ReportCreator{
     //        $document->setValue('position', iconv('utf-8', 'gbk', $exam->u_department));
             $document->setValue('date', iconv('utf-8', 'gbk', date('Y年m月d日',$exam->nid_update_date)));
 
-    //        $document->setValue('work', iconv('utf-8', 'gbk', '动态 ==在工作情境中，你希望自己表现出的主要行为风格为D（支配型）。你希望自己可以表现出极高的成就感，好胜且有进取心，精力充沛，敢于挑战，果断自信，善于领导。'));
-    //        $document->setValue('innate', iconv('utf-8', 'gbk', '动态 ==当你处于压力情境下时，你将会表现出自己最真实的动机与欲求，此时，你将会表现出的主要行为风格为D（支配型）、I（影响型）、S（稳健型）。此时，你目标明确，做事耐心坚定，精力充沛，善于交往。'));
-    //        $document->setValue('outside', iconv('utf-8', 'gbk', '动态 ==你在平时工作中，最常表现出来的行为风格为D（支配型）。你有着极高的成就感，好胜且有进取心，精力充沛，敢于挑战，果断自信，善于领导。'));
+            $document->setValue('work', iconv('utf-8', 'gbk', $exam->str->working_str));
+            $document->setValue('innate', iconv('utf-8', 'gbk', $exam->str->innate_str));
+            $document->setValue('outside', iconv('utf-8', 'gbk', $exam->str->other_str));
             $document->setValue('suitable', iconv('utf-8', 'gbk', $exam->str->stress_desc->desc));
 
             $document->setValue('code', iconv('utf-8', 'gbk', $exam->str->rst_name));

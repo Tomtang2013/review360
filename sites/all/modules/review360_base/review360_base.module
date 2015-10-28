@@ -815,8 +815,24 @@ function load_survey_user_exam_by_sid_user_key($sid,$user_key){
 
 function generate_survey_rsult_str($exam){
     $str = generate_survey_rsult_str_one($exam->rst);
+    $str->working_str = generate_survey_result_str_two(
+                    $exam->rst->in_working_me_value->d_value,
+                    $exam->rst->in_working_me_value->i_value,
+                    $exam->rst->in_working_me_value->s_value,
+                    $exam->rst->in_working_me_value->c_value,"in_working_me");
+    $str->innate_str = generate_survey_result_str_two(
+                    $exam->rst->innate_value->d_value,
+                    $exam->rst->innate_value->i_value,
+                    $exam->rst->innate_value->s_value,
+                    $exam->rst->innate_value->c_value,"innate");
+    $str->other_str = generate_survey_result_str_two(
+                    $exam->rst->other_value->d_value,
+                    $exam->rst->other_value->i_value,
+                    $exam->rst->other_value->s_value,
+                    $exam->rst->other_value->c_value,"other");
     $str->stress_desc = generate_stress_rst($exam->rst->stress_value,$exam->u_name);
     $str->high_light = generate_survey_high_light($exam->rst);
+    dd($str);
     return $str;
 }
 
@@ -837,17 +853,46 @@ function generate_survey_high_light($rst){
     
 }
 
+function pick_up_value($value,$d,$i,$s,$c){
+    if($value == $d && $d>50) return "D";
+    else if($value == $i && $i>50) return "I";
+    else if($value == $s && $s>50) return "S";
+    else if($value == $c && $c>50) return "C";
+}
+
+function generate_survey_result_str_two($d,$i,$s,$c,$quadrant){
+    $data = array($d,$i,$s,$c);
+    sort($data);
+  
+    $type = '';
+    $type.= pick_up_value($data[3],$d,$i,$s,$c);
+    $type.= pick_up_value($data[2],$d,$i,$s,$c);
+    $type.= pick_up_value($data[1],$d,$i,$s,$c);
+    $type.= pick_up_value($data[0],$d,$i,$s,$c);
+    
+    if($type == ''){
+        $type = 'DISC';
+    }
+    
+    $query = "select * from review360_report_img_str   
+        where ident_str = '$type'";
+    $str = db_query($query)->fetchObject();
+    switch($quadrant){
+       case 'in_working_me': return $str->working_str;
+       case 'innate': return $str->innate_str;
+       case 'other' : return $str->other_str;
+    }
+    return $str;
+}
+
+
 function generate_survey_rsult_str_one($rst){
     $code = null;
     $d = $rst->other_value->d_value > 50? true:false;
     $i = $rst->other_value->i_value > 50? true:false;
     $s = $rst->other_value->s_value > 50? true:false;
     $c = $rst->other_value->c_value > 50? true:false;
-//    dd($rst->other_value);
-//    dd($d);  
-//    dd($i); 
-//    dd($s); 
-//    dd($c); 
+ 
     if($d == true && $i == false && $s == false && $c == false )
         $code = "D";
     else if($d == true && $i == true && $s == false && $c == false 
