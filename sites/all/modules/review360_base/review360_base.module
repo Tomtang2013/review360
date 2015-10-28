@@ -832,7 +832,6 @@ function generate_survey_rsult_str($exam){
                     $exam->rst->other_value->c_value,"other");
     $str->stress_desc = generate_stress_rst($exam->rst->stress_value,$exam->u_name);
     $str->high_light = generate_survey_high_light($exam->rst);
-    dd($str);
     return $str;
 }
 
